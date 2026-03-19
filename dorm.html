@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Біздің жатақхана өмірі</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f5f7;
+    color: #2c3e50;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 40px 0;
+}
+
+/* HEADER */
+header {
+    background: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+header img {
+    width: 120px;
+    object-fit: contain;
+}
+
+/* HERO */
+.hero {
+    position: relative;
+    height: 300px;
+    background: url("dormitory.jpg") center/cover no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    border-radius: 10px;
+    margin-bottom: 40px;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    border-radius: 10px;
+}
+
+.hero h1 {
+    position: relative;
+    z-index: 2;
+    font-size: 36px;
+}
+
+/* TEXT BLOCK */
+.text-block {
+    margin-bottom: 40px;
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+/* IMAGE GRID */
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.image-grid img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* FOOTER */
+footer {
+    background: #fff;
+    padding: 20px 0;
+    text-align: center;
+    color: #2c3e50;
+    border-top: 1px solid #ccc;
+    font-size: 14px;
+}
+
+footer p {
+    margin: 5px 0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f5f7;
+    color: #2c3e50;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* HEADER */
+header {
+    background: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1f3c88;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: #8b1e2d;
+}
+
+/* HERO SECTION */
+.hero {
+    position: relative;
+    height: 450px;
+    background: url("class.jpg") center/cover no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    top: 0;
+    left: 0;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 12px 25px;
+    background: #8b1e2d;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #6d1622;
+}
+
+/* CARDS */
+.cards {
+    margin-top: 60px;
+    display: flex;
+    gap: 30px;
+    justify-content: space-between;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+    width: 100%;
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card h3 {
+    margin-bottom: 10px;
+}
+
+.card p {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+.card .btn {
+    display: inline-block;
+    font-size: 14px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .cards {
+        flex-direction: column;
+    }
+}
+
+.hero {
+    background-image: url("bg 1.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    height: 40vh; /* на весь экран */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+}
+
+.hero-content {
+    text-align: center;
+    color: white;
+    z-index: 2;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.4); /* затемнение */
+}
+
+.logo img {
+    width: 20%;
+    height: 20%;
+    object-fit: contain; /* чтобы не искажался */
+}
+</style>
+</head>
+<body>
+
+
+<header>
+    <div class="container nav">
+        <div class="logo">
+             <img src="logo.png" alt="logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Басты бет</a></li>
+                <li><a href="events.html">Іс-шаралар</a></li>
+                <li><a href="plans.html">Жоспарлар</a></li>
+                <li><a href="achievements.html">Жетістіктер</a></li>
+              
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="text-block">
+        <p>Біздің жатақхана – оқушылар үшін екінші үй сияқты. Мұнда әрбір күні қызықты әрі пайдалы өтеді: таңғы жаттығулар мен сабақтардан кейінгі демалыс уақытында оқушылар спортпен айналысады, музыкалық және шығармашылық үйірмелерде өз таланттарын дамытады.</p>
+        <p>Жатақхана өмірінде тәртіп пен достық бір-бірімен үйлесімді жүреді. Оқушылар бірге тамақтанады, таза және жайлы ортада демалады, оқу мен ойын арасында теңгерімді сақтайды. Мұнда әркімнің қызығушылығы ескеріледі: кімдер болса да өзіне ұнайтын іс-шараға қатыса алады.</p>
+        <p>Сонымен қатар, тәрбиешілер әрқашан оқушылардың жан-жақты дамуына көңіл бөледі: олармен әңгімелесіп, жаңа жобаларға жетекшілік жасайды, сабақтан тыс уақытта қызықты тренингтер мен ойындар өткізеді. Жатақханалық өмірде ұжымдық жұмыс пен жауапкершілік сезімі қалыптасады, достық пен сыйластықты арттырады.</p>
+        <p>Біздің жатақхана – бұл жай ғана тұру орны емес, бұл оқушылар үшін шығармашылыққа, білімге және достыққа толы ерекше орта. Мұнда әр күн қызықты оқиғаларға, жаңа достарға және есте қаларлық сәттерге толы.</p>
+    </div>
+
+    <div class="image-grid">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWl8MNrY2-hHbOnybKzuxjDrONpEmitB3CHQ&s" alt="Оқу бөлмесі">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOBA1n-NILw7tRvLwLEOFuY-8dfeA0ag_8MA&s" alt="Спорт залы">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX8FBlpnRKbMQ_6hChDDCyJm_05jvIP69WFg&s" alt="Музыкалық бөлме">
+        <img src="dorm_room.jpg" alt="Жатақхана бөлмесі">
+    </div>
+
+</div>
+
+
+
+</body>
+</html>
