@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Админ панель - Жоспарлар</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f5f7;
+    padding: 40px;
+}
+a.back-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #1f3c88;
+    text-decoration: none;
+}
+a.back-link:hover {
+    text-decoration: underline;
+}
+.container {
+    max-width: 700px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+h1 {
+    margin-bottom: 20px;
+    color: #1f3c88;
+}
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+button {
+    background: #8b1e2d;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+button:hover {
+    background: #6d1622;
+}
+.plan-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #fefefe;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    position: relative;
+}
+.plan-item span {
+    font-size: 14px;
+    color: #555;
+    white-space: pre-wrap;
+}
+.delete-btn {
+    align-self: flex-end;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.delete-btn:hover {
+    background: #c0392b;
+}
+</style>
+</head>
+<body>
+
+<a href="admin_main.html" class="back-link">Артқа қайту</a>
+
+<div class="container">
+<h1>Жоспар қосу</h1>
+
+<input type="date" id="planDate">
+<textarea id="planText" placeholder="Планды енгізіңіз..."></textarea>
+<button onclick="addPlan()">Қосу</button>
+
+<h2 style="margin-top:30px; color:#1f3c88;">Барлық жоспарлар</h2>
+<div id="plansList"></div>
+</div>
+
+<script>
+// Ключ для хранения планов в localStorage
+const STORAGE_KEY = "plans_admin";
+
+// Получаем все существующие планы
+function renderPlans() {
+    const container = document.getElementById("plansList");
+    container.innerHTML = "";
+    const plans = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    
+    plans.forEach((plan, index) => {
+        const div = document.createElement("div");
+        div.className = "plan-item";
+        div.innerHTML = `
+            <span><strong>${plan.date}:</strong> ${plan.text}</span>
+            <button class="delete-btn" onclick="deletePlan(${index})">Өшіру</button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Добавление нового плана
+function addPlan() {
+    const date = document.getElementById("planDate").value;
+    const text = document.getElementById("planText").value.trim();
+    if (!date || !text) { alert("Барлық өрістерді толтырыңыз!"); return; }
+
+    const plans = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    plans.unshift({date, text}); // новые сверху
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(plans));
+
+    document.getElementById("planDate").value = "";
+    document.getElementById("planText").value = "";
+
+    renderPlans();
+}
+
+// Удаление плана
+function deletePlan(index) {
+    const plans = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    plans.splice(index, 1);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(plans));
+    renderPlans();
+}
+
+// Показываем все записи при загрузке
+renderPlans();
+</script>
+
+</body>
+</html>
