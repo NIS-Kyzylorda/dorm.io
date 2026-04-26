@@ -5,161 +5,140 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Жетістіктер</title>
 
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
 }
 
-body {
-    background: #f4f5f7;
-    color: #2c3e50;
+body{
+background:#f4f5f7;
+color:#2c3e50;
 }
 
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: auto;
+.container{
+width:90%;
+max-width:1000px;
+margin:auto;
 }
 
 /* HEADER */
-header {
-    background: white;
-    padding: 20px 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+header{
+background:white;
+padding:20px 0;
+box-shadow:0 2px 8px rgba(0,0,0,0.05);
 }
 
-.nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
-.logo img {
-    width: 60px;
+.logo img{
+width:60px;
 }
 
-nav ul {
-    display: flex;
-    list-style: none;
-    gap: 30px;
+nav ul{
+display:flex;
+list-style:none;
+gap:30px;
 }
 
-nav a {
-    text-decoration: none;
-    color: #2c3e50;
-    font-weight: 500;
+nav a{
+text-decoration:none;
+color:#2c3e50;
 }
 
-nav a:hover {
-    color: #8b1e2d;
+nav a:hover{
+color:#8b1e2d;
 }
 
 /* TITLE */
-.title {
-    text-align: center;
-    margin: 50px 0 40px;
+.title{
+text-align:center;
+margin:40px 0;
 }
 
-.title h1 {
-    font-size: 40px;
-    color: #1f3c88;
+.title h1{
+color:#1f3c88;
 }
 
-/* ACHIEVEMENTS */
-.achievement {
-    display: flex;
-    gap: 30px;
-    background: white;
-    margin-bottom: 30px;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    align-items: center;
+/* ACHIEVEMENT */
+.achievement{
+display:flex;
+gap:20px;
+background:white;
+margin-bottom:20px;
+padding:15px;
+border-radius:10px;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 
-.achievement img {
-    width: 260px;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 8px;
+.achievement img{
+width:200px;
+height:140px;
+object-fit:cover;
+border-radius:8px;
 }
 
-.achievement-text h2 {
-    margin-bottom: 10px;
-    color: #1f3c88;
+.reactions{
+margin-top:10px;
 }
 
-.achievement-text p {
-    color: #555;
-    line-height: 1.6;
+.reactions button{
+margin-right:8px;
+padding:6px 10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+background:#eee;
 }
 
-/* REACTIONS */
-.reactions {
-    margin-top: 12px;
-}
-
-.reactions button {
-    margin-right: 10px;
-    padding: 6px 10px;
-    border: none;
-    border-radius: 6px;
-    background: #eee;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.reactions button:hover {
-    background: #ddd;
-}
-
-/* RESPONSIVE */
-@media (max-width: 800px) {
-    .achievement {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .achievement img {
-        width: 100%;
-        height: 200px;
-    }
+.reactions button.active{
+background:#d0dcff;
+font-weight:bold;
 }
 </style>
-
 </head>
 
 <body>
 
 <header>
-    <div class="container nav">
-        <div class="logo">
-            <img src="logo.png" alt="logo">
-        </div>
+<div class="container nav">
+<div class="logo">
+<img src="logo.png">
+</div>
 
-        <nav>
-            <ul>
-                <li><a href="index.html">Басты бет</a></li>
-                <li><a href="events.html">Іс-шаралар</a></li>
-                <li><a href="plans.html">Жоспарлар</a></li>
-                <li><a href="achievements.html">Жетістіктер</a></li>
-            </ul>
-        </nav>
-    </div>
+<nav>
+<ul>
+<li><a href="index.html">Басты бет</a></li>
+<li><a href="events.html">Іс-шаралар</a></li>
+<li><a href="plans.html">Жоспарлар</a></li>
+<li><a href="achievements.html">Жетістіктер</a></li>
+</ul>
+</nav>
+</div>
 </header>
 
-<section class="container">
-    <div class="title">
-        <h1>Оқушылардың жетістіктері</h1>
-    </div>
+<div class="container">
 
-    <div id="achievements-list"></div>
-</section>
+<div class="title">
+<h1>Оқушылардың жетістіктері</h1>
+</div>
 
-<script>const firebaseConfig = {
+<div id="list"></div>
+
+</div>
+
+<script>
+/* 🔥 FIREBASE */
+const firebaseConfig = {
   apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
   authDomain: "nis-dorm.firebaseapp.com",
   projectId: "nis-dorm",
@@ -171,62 +150,66 @@ nav a:hover {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const container = document.getElementById("achievements-list");
+const list = document.getElementById("list");
 
-/* 👤 user id */
+/* 👤 USER ID */
 let userId = localStorage.getItem("userId");
+
 if (!userId) {
     userId = "user_" + Math.random().toString(36).substr(2, 9);
     localStorage.setItem("userId", userId);
 }
 
-/* 🔥 LIVE LOAD */
+/* 🔥 REALTIME LOAD */
 db.collection("achievements")
-.orderBy("createdAt", "desc")
 .onSnapshot(snapshot => {
 
-    container.innerHTML = "";
+    list.innerHTML = "";
+
+    console.log("DOCS:", snapshot.size);
 
     snapshot.forEach(doc => {
+
         const a = doc.data();
+        console.log("ITEM:", a);
 
         const reactions = a.reactionsByUser || {};
         const userReaction = reactions[userId] || null;
 
-        const block = document.createElement("div");
-        block.className = "achievement";
+        const div = document.createElement("div");
+        div.className = "achievement";
 
-        block.innerHTML = `
-            <img src="${a.image || 'https://via.placeholder.com/300'}">
+        div.innerHTML = `
+            <img src="${a.image || 'https://via.placeholder.com/200'}">
 
-            <div class="achievement-text">
+            <div>
                 <h2>${a.title || ""}</h2>
                 <p>${a.description || ""}</p>
 
                 <div class="reactions">
-                    <button onclick="toggleReaction('${doc.id}', 'like')"
-                        class="${userReaction === 'like' ? 'active' : ''}">
+                    <button onclick="toggleReaction('${doc.id}','like')"
+                    class="${userReaction==='like'?'active':''}">
                         👍 ${a.like || 0}
                     </button>
 
-                    <button onclick="toggleReaction('${doc.id}', 'love')"
-                        class="${userReaction === 'love' ? 'active' : ''}">
+                    <button onclick="toggleReaction('${doc.id}','love')"
+                    class="${userReaction==='love'?'active':''}">
                         ❤️ ${a.love || 0}
                     </button>
 
-                    <button onclick="toggleReaction('${doc.id}', 'fire')"
-                        class="${userReaction === 'fire' ? 'active' : ''}">
+                    <button onclick="toggleReaction('${doc.id}','fire')"
+                    class="${userReaction==='fire'?'active':''}">
                         🔥 ${a.fire || 0}
                     </button>
                 </div>
             </div>
         `;
 
-        container.appendChild(block);
+        list.appendChild(div);
     });
 });
 
-/* ⚡ REACTION LOGIC (1 reaction + changeable) */
+/* ⚡ REACTION SYSTEM (1 user = 1 reaction, can change) */
 async function toggleReaction(id, newType){
 
     const ref = db.collection("achievements").doc(id);
@@ -243,24 +226,23 @@ async function toggleReaction(id, newType){
 
         let updates = {};
 
-        // ❌ убрать старую реакцию
+        // убрать старую реакцию
         if (oldType) {
             updates[oldType] =
                 firebase.firestore.FieldValue.increment(-1);
         }
 
-        // ➕ поставить новую
+        // поставить новую
         updates[newType] =
             firebase.firestore.FieldValue.increment(1);
 
-        // 💾 сохранить выбор пользователя
+        // сохранить пользователя
         updates[`reactionsByUser.${userId}`] = newType;
 
         t.update(ref, updates);
     });
 }
 
-/* global */
 window.toggleReaction = toggleReaction;
 </script>
 
