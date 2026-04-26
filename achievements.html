@@ -1,258 +1,194 @@
 <!DOCTYPE html>
 <html lang="kk">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Жетістіктер</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Жетістіктер</title>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-body {
-    background: #f4f5f7;
-    color: #2c3e50;
-}
+        body {
+            background-color: #f9f9f9; /* Скриншоттағыдай ашық фон */
+            padding-top: 40px;
+        }
 
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: auto;
-}
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: auto;
+        }
 
-/* HEADER */
-header {
-    background: white;
-    padding: 20px 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
+        /* Тақырып стилі */
+        .page-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #000;
+        }
 
-.nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        /* Карточка стилі */
+        .achievement-card {
+            display: flex;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            padding: 15px;
+            gap: 20px;
+        }
 
-.logo img {
-    width: 60px;
-}
+        .achievement-image {
+            width: 280px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
 
-nav ul {
-    display: flex;
-    list-style: none;
-    gap: 30px;
-}
+        .achievement-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
 
-nav a {
-    text-decoration: none;
-    color: #2c3e50;
-    font-weight: 500;
-}
+        .achievement-info h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #000;
+        }
 
-nav a:hover {
-    color: #8b1e2d;
-}
+        .achievement-info p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
+        }
 
-/* TITLE */
-.title {
-    text-align: center;
-    margin: 50px 0 40px;
-}
+        /* Реакциялар (түймелер) */
+        .reactions-bar {
+            display: flex;
+            gap: 10px;
+        }
 
-.title h1 {
-    font-size: 40px;
-    color: #1f3c88;
-}
+        .reaction-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            background: #f0f2f5;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+        }
 
-/* ACHIEVEMENTS */
-.achievement {
-    display: flex;
-    gap: 30px;
-    background: white;
-    margin-bottom: 30px;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    align-items: center;
-}
+        .reaction-btn:hover {
+            background: #e4e6e9;
+        }
 
-.achievement img {
-    width: 260px;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.achievement-text h2 {
-    margin-bottom: 10px;
-    color: #1f3c88;
-}
-
-.achievement-text p {
-    color: #555;
-    line-height: 1.6;
-}
-
-/* REACTIONS */
-.reactions {
-    margin-top: 12px;
-}
-
-.reactions button {
-    margin-right: 10px;
-    padding: 6px 10px;
-    border: none;
-    border-radius: 6px;
-    background: #eee;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.reactions button:hover {
-    background: #ddd;
-}
-
-@media (max-width: 800px) {
-    .achievement {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .achievement img {
-        width: 100%;
-        height: 200px;
-    }
-}
-</style>
-
+        /* Мобильді нұсқа */
+        @media (max-width: 768px) {
+            .achievement-card {
+                flex-direction: column;
+            }
+            .achievement-image {
+                width: 100%;
+                height: 200px;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<header>
-    <div class="container nav">
-        <div class="logo">
-            <img src="logo.png" alt="logo">
-        </div>
-
-        <nav>
-            <ul>
-                <li><a href="index.html">Басты бет</a></li>
-                <li><a href="events.html">Іс-шаралар</a></li>
-                <li><a href="plans.html">Жоспарлар</a></li>
-                <li><a href="achievements.html">Жетістіктер</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
-
-<section class="container">
-    <div class="title">
-        <h1>Оқушылардың жетістіктері</h1>
+    <div class="container">
+        <h1 class="page-title">Жетістіктер</h1>
+        
+        <div id="achievements-list"></div>
     </div>
 
-    <div id="achievements-list"></div>
-</section>
+    <script>
+        // 1. Firebase инициализациясы
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
+            authDomain: "nis-dorm.firebaseapp.com",
+            projectId: "nis-dorm",
+            storageBucket: "nis-dorm.appspot.com",
+            messagingSenderId: "34661486520",
+            appId: "1:34661486520:web:3b6d3bd38c2d6fa7e0c94d"
+        };
 
-<script>
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const listElement = document.getElementById("achievements-list");
 
-/* 🔥 FIREBASE INIT */
-const firebaseConfig = {
-  apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
-  authDomain: "nis-dorm.firebaseapp.com",
-  projectId: "nis-dorm",
-  storageBucket: "nis-dorm.appspot.com",
-  messagingSenderId: "34661486520",
-  appId: "1:34661486520:web:3b6d3bd38c2d6fa7e0c94d"
-};
+        // 2. Мәліметтерді шығару функциясы
+        async function loadAchievements() {
+            try {
+                // "createdAt" бойынша сұрыптап алу
+                const snapshot = await db.collection("achievements").orderBy("createdAt", "desc").get();
+                listElement.innerHTML = ""; // Тазалау
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const id = doc.id;
 
-const container = document.getElementById("achievements-list");
+                    const card = document.createElement("div");
+                    card.className = "achievement-card";
 
-/* 📥 LOAD */
-async function render(){
+                    card.innerHTML = `
+                        <img src="${data.image || 'https://via.placeholder.com/280x180'}" class="achievement-image" alt="image">
+                        <div class="achievement-info">
+                            <h2>${data.title}</h2>
+                            <p>${data.description || ''}</p>
+                            <div class="reactions-bar">
+                                <button class="reaction-btn" onclick="addReaction('${id}', 'likes')">
+                                    👍 <span>${data.likes || 0}</span>
+                                </button>
+                                <button class="reaction-btn" onclick="addReaction('${id}', 'loves')">
+                                    ❤️ <span>${data.loves || 0}</span>
+                                </button>
+                                <button class="reaction-btn" onclick="addReaction('${id}', 'fires')">
+                                    🔥 <span>${data.fires || 0}</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    listElement.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Деректерді жүктеу қатесі:", error);
+            }
+        }
 
-    container.innerHTML = "";
+        // 3. Реакция қосу функциясы
+        async function addReaction(id, type) {
+            const docRef = db.collection("achievements").doc(id);
+            
+            try {
+                // Firebase-тегі мәнді 1-ге арттыру (increment)
+                await docRef.update({
+                    [type]: firebase.firestore.FieldValue.increment(1)
+                });
+                
+                // Бетті қайта жүктемей-ақ жаңарту (render)
+                loadAchievements();
+            } catch (err) {
+                console.error("Реакция қосу мүмкін болмады:", err);
+            }
+        }
 
-    const snapshot = await db.collection("achievements")
-        .orderBy("createdAt", "desc")
-        .get();
+        // Бастапқы жүктеу
+        loadAchievements();
 
-    snapshot.forEach(doc => {
-
-        let a = doc.data();
-
-        const block = document.createElement("div");
-        block.className = "achievement";
-
-        block.innerHTML = `
-            <img src="${a.image}">
-            <div class="achievement-text">
-                <h2>${a.title}</h2>
-                <p>${a.description}</p>
-
-                <div class="reactions">
-                    <button onclick="toggleReaction('${doc.id}','like')">
-                        👍 ${a.likes || 0}
-                    </button>
-
-                    <button onclick="toggleReaction('${doc.id}','love')">
-                        ❤️ ${a.loves || 0}
-                    </button>
-
-                    <button onclick="toggleReaction('${doc.id}','fire')">
-                        🔥 ${a.fires || 0}
-                    </button>
-                </div>
-            </div>
-        `;
-
-        container.appendChild(block);
-    });
-}
-
-/* ⚡ REACTIONS (FIREBASE VERSION) */
-async function toggleReaction(id, type){
-
-    const ref = db.collection("achievements").doc(id);
-    const docSnap = await ref.get();
-
-    if(!docSnap.exists()) return;
-
-    let data = docSnap.data();
-
-    data.likes = data.likes || 0;
-    data.loves = data.loves || 0;
-    data.fires = data.fires || 0;
-
-    const field = type + "s";
-
-    // просто увеличиваем (без userReaction пока — упрощённая версия)
-    data[field] = (data[field] || 0) + 1;
-
-    await ref.update({
-        likes: data.likes,
-        loves: data.loves,
-        fires: data.fires
-    });
-
-    render();
-}
-
-render();
-
-</script>
-
+    </script>
 </body>
 </html>
-
