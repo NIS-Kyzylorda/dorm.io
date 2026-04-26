@@ -128,122 +128,136 @@ font-size:14px;
 <div id="events-list"></div>
 </section>
 
-<script>
-/*
-🔥 FIREBASE READY STRUCTURE
-(events must come from database later)
-*/
+<script>const firebaseConfig = {
+  apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
+  authDomain: "nis-dorm.firebaseapp.com",
+  projectId: "nis-dorm",
+  storageBucket: "nis-dorm.appspot.com",
+  messagingSenderId: "34661486520",
+  appId: "1:34661486520:web:3b6d3bd38c2d6fa7e0c94d"
+};
 
-let events = JSON.parse(localStorage.getItem("events")) || []
-const container = document.getElementById("events-list")
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-// COMMENTS STORAGE KEY = eventId
+const container = document.getElementById("events-list");
+
+/* 📥 LOAD EVENTS FROM FIREBASE */
+db.collection("events")
+.orderBy("createdAt", "desc")
+.onSnapshot(snapshot => {
+
+    container.innerHTML = "";
+
+    snapshot.forEach(doc => {
+
+        const e = doc.data();
+
+        const images = e.images || (e.image ? [e.image] : []);
+        let current = 0;
+
+        const block = document.createElement("div");
+        block.className = "event";
+
+        block.innerHTML = `
+            <div class="carousel">
+                <img id="img-${doc.id}" src="${images[0] || ''}">
+            </div>
+
+            <div class="event-text">
+                <h2>${e.title || ""}</h2>
+                <p>${e.description || ""}</p>
+
+                <div class="comment-box">
+                    <input id="name-${doc.id}" placeholder="Атыңыз">
+                    <textarea id="text-${doc.id}" placeholder="Пікір"></textarea>
+                    <button onclick="addComment('${doc.id}')">Жіберу</button>
+                </div>
+
+                <div id="comments-${doc.id}"></div>
+            </div>
+        `;
+
+        container.appendChild(block);
+
+        renderComments(doc.id);
+
+        /* 🎠 carousel */
+        if(images.length > 1){
+            setInterval(()=>{
+                current++;
+                if(current >= images.length) current = 0;
+                const img = document.getElementById("img-"+doc.id);
+                if(img) img.src = images[current];
+            }, 3000);
+        }
+    });
+});
+
+/* 💬 COMMENTS (still localStorage for now) */
 function getComments(id){
-return JSON.parse(localStorage.getItem("comments_"+id)) || []
+return JSON.parse(localStorage.getItem("comments_"+id)) || [];
 }
 
-function saveComments(id, data){
-localStorage.setItem("comments_"+id, JSON.stringify(data))
+function saveComments(id,data){
+localStorage.setItem("comments_"+id, JSON.stringify(data));
 }
 
-// render comments
 function renderComments(id){
-const box = document.getElementById("comments-"+id)
-if(!box) return
+const box = document.getElementById("comments-"+id);
+if(!box) return;
 
-const comments = getComments(id)
-box.innerHTML = ""
+const comments = getComments(id);
+box.innerHTML = "";
 
 comments.forEach((c,i)=>{
-const div = document.createElement("div")
-div.className = "comment"
+const div = document.createElement("div");
+div.className = "comment";
+
 div.innerHTML = `
 <b>${c.name}</b>: ${c.text}
 <button onclick="deleteComment('${id}',${i},'${c.name}')">❌</button>
-`
-box.appendChild(div)
-})
+`;
+
+box.appendChild(div);
+});
 }
 
-// add comment
 function addComment(id){
-const name = document.getElementById("name-"+id).value
-const text = document.getElementById("text-"+id).value
 
-if(!name || !text) return alert("Толтыр")
+const name = document.getElementById("name-"+id).value;
+const text = document.getElementById("text-"+id).value;
 
-let comments = getComments(id)
-comments.push({name,text})
-saveComments(id,comments)
-
-renderComments(id)
-
-document.getElementById("text-"+id).value=""
-localStorage.setItem("currentUser",name)
+if(!name || !text){
+alert("Толтыр");
+return;
 }
 
-// delete comment
-function deleteComment(eventId, index, author){
-const user = localStorage.getItem("currentUser")
+let comments = getComments(id);
+comments.push({name,text});
+saveComments(id,comments);
+
+renderComments(id);
+
+document.getElementById("text-"+id).value = "";
+localStorage.setItem("currentUser", name);
+}
+
+function deleteComment(eventId,index,author){
+
+const user = localStorage.getItem("currentUser");
+
 if(user !== author){
-alert("Тек өз пікіріңді өшіре аласың")
-return
+alert("Тек өз пікіріңді өшіре аласың");
+return;
 }
 
-let comments = getComments(eventId)
-comments.splice(index,1)
-saveComments(eventId,comments)
+let comments = getComments(eventId);
+comments.splice(index,1);
+saveComments(eventId,comments);
 
-renderComments(eventId)
+renderComments(eventId);
 }
-
-// render events
-function renderEvents(){
-container.innerHTML=""
-
-events.forEach((e,id)=>{
-
-let images = e.images || [e.image]
-let current = 0
-
-const block = document.createElement("div")
-block.className="event"
-
-block.innerHTML=`
-<div class="carousel">
-<img id="img-${id}" src="${images[0]}">
-</div>
-
-<div class="event-text">
-<h2>${e.title}</h2>
-<p>${e.description}</p>
-
-<div class="comment-box">
-<input id="name-${id}" placeholder="Атыңыз">
-<textarea id="text-${id}" placeholder="Пікір"></textarea>
-<button onclick="addComment(${id})">Жіберу</button>
-</div>
-
-<div id="comments-${id}"></div>
-</div>
-`
-
-container.appendChild(block)
-renderComments(id)
-
-// carousel
-if(images.length>1){
-setInterval(()=>{
-current++
-if(current>=images.length) current=0
-document.getElementById("img-"+id).src = images[current]
-},3000)
-}
-
-})
-}
-
-renderEvents()
 </script>
 
 </body>
