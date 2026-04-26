@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Жетістіктер</title>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 <style>
 * {
     margin: 0;
@@ -24,7 +27,6 @@ body {
     margin: auto;
 }
 
-/* HEADER */
 header {
     background: white;
     padding: 20px 0;
@@ -53,11 +55,6 @@ nav a {
     font-weight: 500;
 }
 
-nav a:hover {
-    color: #8b1e2d;
-}
-
-/* TITLE */
 .title {
     text-align: center;
     margin: 50px 0 40px;
@@ -68,7 +65,6 @@ nav a:hover {
     color: #1f3c88;
 }
 
-/* ACHIEVEMENTS */
 .achievement {
     display: flex;
     gap: 30px;
@@ -87,21 +83,6 @@ nav a:hover {
     border-radius: 8px;
 }
 
-.achievement-text h2 {
-    margin-bottom: 10px;
-    color: #1f3c88;
-}
-
-.achievement-text p {
-    color: #555;
-    line-height: 1.6;
-}
-
-/* REACTIONS */
-.reactions {
-    margin-top: 12px;
-}
-
 .reactions button {
     margin-right: 10px;
     padding: 6px 10px;
@@ -109,144 +90,96 @@ nav a:hover {
     border-radius: 6px;
     background: #eee;
     cursor: pointer;
-    font-size: 14px;
-}
-
-.reactions button:hover {
-    background: #ddd;
-}
-
-/* RESPONSIVE */
-@media (max-width: 800px) {
-    .achievement {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .achievement img {
-        width: 100%;
-        height: 200px;
-    }
 }
 </style>
-
 </head>
 
 <body>
 
 <header>
-    <div class="container nav">
-        <div class="logo">
-            <img src="logo.png" alt="logo">
-        </div>
-
-        <nav>
-            <ul>
-                <li><a href="index.html">Басты бет</a></li>
-                <li><a href="events.html">Іс-шаралар</a></li>
-                <li><a href="plans.html">Жоспарлар</a></li>
-                <li><a href="achievements.html">Жетістіктер</a></li>
-            </ul>
-        </nav>
-    </div>
+<div class="container nav">
+<div class="logo"><img src="logo.png"></div>
+<nav>
+<ul>
+<li><a href="index.html">Басты бет</a></li>
+<li><a href="events.html">Іс-шаралар</a></li>
+<li><a href="plans.html">Жоспарлар</a></li>
+<li><a href="achievements.html">Жетістіктер</a></li>
+</ul>
+</nav>
+</div>
 </header>
 
 <section class="container">
-    <div class="title">
-        <h1>Оқушылардың жетістіктері</h1>
-    </div>
-
-    <div id="achievements-list"></div>
+<div class="title"><h1>Оқушылардың жетістіктері</h1></div>
+<div id="achievements-list"></div>
 </section>
 
 <script>
-let container = document.getElementById("achievements-list")
+// 🔥 FIREBASE INIT
+const firebaseConfig = {
+  apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
+  authDomain: "nis-dorm.firebaseapp.com",
+  projectId: "nis-dorm",
+  storageBucket: "nis-dorm.appspot.com",
+  messagingSenderId: "34661486520",
+  appId: "1:34661486520:web:3b6d3bd38c2d6fa7e0c94d"
+};
 
-let achievements = JSON.parse(localStorage.getItem("achievements")) || [
-    {
-        id: 1,
-        image: "dorm1.jpeg",
-        title: "Олимпиада жеңісі",
-        description: "Оқушылар математика олимпиадасында жүлделі орын алды.",
-        likes: 0,
-        loves: 0,
-        fires: 0,
-        userReaction: null
-    },
-    {
-        id: 2,
-        image: "dorm2.jpeg",
-        title: "Спорттық жарыс",
-        description: "Біздің команда баскетболдан 1-орын иеленді.",
-        likes: 0,
-        loves: 0,
-        fires: 0,
-        userReaction: null
-    }
-]
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-function render() {
-    container.innerHTML = ""
+const container = document.getElementById("achievements-list");
 
-    achievements.forEach(a => {
-        let block = document.createElement("div")
-        block.className = "achievement"
+// 🔄 LIVE LOAD (сам обновляется)
+db.collection("achievements")
+.orderBy("createdAt", "desc")
+.onSnapshot(snapshot => {
+
+    container.innerHTML = "";
+
+    snapshot.forEach(doc => {
+        let a = doc.data();
+
+        const block = document.createElement("div");
+        block.className = "achievement";
 
         block.innerHTML = `
             <img src="${a.image}">
-            <div class="achievement-text">
+            <div>
                 <h2>${a.title}</h2>
                 <p>${a.description}</p>
 
                 <div class="reactions">
-                    <button onclick="toggleReaction(${a.id}, 'like')">
+                    <button onclick="react('${doc.id}','likes')">
                         👍 ${a.likes || 0}
                     </button>
 
-                    <button onclick="toggleReaction(${a.id}, 'love')">
+                    <button onclick="react('${doc.id}','loves')">
                         ❤️ ${a.loves || 0}
                     </button>
 
-                    <button onclick="toggleReaction(${a.id}, 'fire')">
+                    <button onclick="react('${doc.id}','fires')">
                         🔥 ${a.fires || 0}
                     </button>
                 </div>
             </div>
-        `
-        container.appendChild(block)
-    })
+        `;
+
+        container.appendChild(block);
+    });
+});
+
+// ⚡ REACTIONS (НОРМАЛЬНЫЕ)
+async function react(id, field){
+
+    const ref = db.collection("achievements").doc(id);
+
+    await ref.update({
+        [field]: firebase.firestore.FieldValue.increment(1)
+    });
+
 }
-
-function toggleReaction(id, type) {
-    let item = achievements.find(a => a.id === id)
-    if (!item) return
-
-    // защита от undefined
-    item.likes = item.likes || 0
-    item.loves = item.loves || 0
-    item.fires = item.fires || 0
-
-    // если уже выбрано → снять
-    if (item.userReaction === type) {
-        item[type + "s"] = Math.max(0, item[type + "s"] - 1)
-        item.userReaction = null
-    } 
-    else {
-        // убрать старую реакцию
-        if (item.userReaction) {
-            item[item.userReaction + "s"] = Math.max(0, item[item.userReaction + "s"] - 1)
-        }
-
-        // поставить новую
-        item[type + "s"] = (item[type + "s"] || 0) + 1
-        item.userReaction = type
-    }
-
-    localStorage.setItem("achievements", JSON.stringify(achievements))
-    render()
-}
-
-render()
 </script>
 
 </body>
