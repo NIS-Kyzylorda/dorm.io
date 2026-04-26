@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Жетістіктер</title>
 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 <style>
 * {
     margin: 0;
@@ -116,7 +120,6 @@ nav a:hover {
     background: #ddd;
 }
 
-/* RESPONSIVE */
 @media (max-width: 800px) {
     .achievement {
         flex-direction: column;
@@ -160,37 +163,37 @@ nav a:hover {
 </section>
 
 <script>
-let container = document.getElementById("achievements-list")
 
-let achievements = JSON.parse(localStorage.getItem("achievements")) || [
-    {
-        id: 1,
-        image: "dorm1.jpeg",
-        title: "Олимпиада жеңісі",
-        description: "Оқушылар математика олимпиадасында жүлделі орын алды.",
-        likes: 0,
-        loves: 0,
-        fires: 0,
-        userReaction: null
-    },
-    {
-        id: 2,
-        image: "dorm2.jpeg",
-        title: "Спорттық жарыс",
-        description: "Біздің команда баскетболдан 1-орын иеленді.",
-        likes: 0,
-        loves: 0,
-        fires: 0,
-        userReaction: null
-    }
-]
+/* 🔥 FIREBASE INIT */
+const firebaseConfig = {
+  apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
+  authDomain: "nis-dorm.firebaseapp.com",
+  projectId: "nis-dorm",
+  storageBucket: "nis-dorm.appspot.com",
+  messagingSenderId: "34661486520",
+  appId: "1:34661486520:web:3b6d3bd38c2d6fa7e0c94d"
+};
 
-function render() {
-    container.innerHTML = ""
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-    achievements.forEach(a => {
-        let block = document.createElement("div")
-        block.className = "achievement"
+const container = document.getElementById("achievements-list");
+
+/* 📥 LOAD */
+async function render(){
+
+    container.innerHTML = "";
+
+    const snapshot = await db.collection("achievements")
+        .orderBy("createdAt", "desc")
+        .get();
+
+    snapshot.forEach(doc => {
+
+        let a = doc.data();
+
+        const block = document.createElement("div");
+        block.className = "achievement";
 
         block.innerHTML = `
             <img src="${a.image}">
@@ -199,54 +202,55 @@ function render() {
                 <p>${a.description}</p>
 
                 <div class="reactions">
-                    <button onclick="toggleReaction(${a.id}, 'like')">
+                    <button onclick="toggleReaction('${doc.id}','like')">
                         👍 ${a.likes || 0}
                     </button>
 
-                    <button onclick="toggleReaction(${a.id}, 'love')">
+                    <button onclick="toggleReaction('${doc.id}','love')">
                         ❤️ ${a.loves || 0}
                     </button>
 
-                    <button onclick="toggleReaction(${a.id}, 'fire')">
+                    <button onclick="toggleReaction('${doc.id}','fire')">
                         🔥 ${a.fires || 0}
                     </button>
                 </div>
             </div>
-        `
-        container.appendChild(block)
-    })
+        `;
+
+        container.appendChild(block);
+    });
 }
 
-function toggleReaction(id, type) {
-    let item = achievements.find(a => a.id === id)
-    if (!item) return
+/* ⚡ REACTIONS (FIREBASE VERSION) */
+async function toggleReaction(id, type){
 
-    // защита от undefined
-    item.likes = item.likes || 0
-    item.loves = item.loves || 0
-    item.fires = item.fires || 0
+    const ref = db.collection("achievements").doc(id);
+    const docSnap = await ref.get();
 
-    // если уже выбрано → снять
-    if (item.userReaction === type) {
-        item[type + "s"] = Math.max(0, item[type + "s"] - 1)
-        item.userReaction = null
-    } 
-    else {
-        // убрать старую реакцию
-        if (item.userReaction) {
-            item[item.userReaction + "s"] = Math.max(0, item[item.userReaction + "s"] - 1)
-        }
+    if(!docSnap.exists()) return;
 
-        // поставить новую
-        item[type + "s"] = (item[type + "s"] || 0) + 1
-        item.userReaction = type
-    }
+    let data = docSnap.data();
 
-    localStorage.setItem("achievements", JSON.stringify(achievements))
-    render()
+    data.likes = data.likes || 0;
+    data.loves = data.loves || 0;
+    data.fires = data.fires || 0;
+
+    const field = type + "s";
+
+    // просто увеличиваем (без userReaction пока — упрощённая версия)
+    data[field] = (data[field] || 0) + 1;
+
+    await ref.update({
+        likes: data.likes,
+        loves: data.loves,
+        fires: data.fires
+    });
+
+    render();
 }
 
-render()
+render();
+
 </script>
 
 </body>
