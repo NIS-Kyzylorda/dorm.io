@@ -18,17 +18,17 @@ body {
     color: #2c3e50;
 }
 
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: auto;
-}
-
 /* HEADER */
 header {
     background: white;
     padding: 20px 0;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
 }
 
 .nav {
@@ -38,9 +38,7 @@ header {
 }
 
 .logo img {
-    width: 20%;
-    height: 20%;
-    object-fit: contain;
+    width: 120px;
 }
 
 nav ul {
@@ -88,7 +86,6 @@ nav a:hover {
 
 .hero h1 {
     font-size: 40px;
-    margin-bottom: 20px;
 }
 
 /* CARDS */
@@ -103,7 +100,6 @@ nav a:hover {
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    overflow: hidden;
     width: 30%;
     text-align: center;
     padding: 30px 20px;
@@ -112,13 +108,6 @@ nav a:hover {
 
 .card:hover {
     transform: translateY(-5px);
-}
-
-.card img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    margin-bottom: 15px;
 }
 
 .card h3 {
@@ -132,9 +121,8 @@ nav a:hover {
     color: #555;
 }
 
-.card .btn {
+.btn {
     display: inline-block;
-    font-size: 14px;
     padding: 10px 20px;
     background: #8b1e2d;
     color: white;
@@ -143,7 +131,7 @@ nav a:hover {
     transition: 0.3s;
 }
 
-.card .btn:hover {
+.btn:hover {
     background: #6d1622;
 }
 
@@ -153,13 +141,14 @@ nav a:hover {
         flex-direction: column;
         align-items: center;
     }
+
     .card {
         width: 80%;
     }
 }
-
 </style>
 </head>
+
 <body>
 
 <header>
@@ -167,6 +156,7 @@ nav a:hover {
         <div class="logo">
             <img src="logo.png" alt="logo">
         </div>
+
         <nav>
             <ul>
                 <li><a href="index.html">Басты бетке оралу</a></li>
@@ -187,23 +177,20 @@ nav a:hover {
 <section class="container cards">
 
     <div class="card">
-        
         <h3>Іс-шаралар</h3>
-        <p>Мұнда жаңа іс-шаралар қосуға және өшіруге болады.</p>
+        <p>Жаңа іс-шаралар қосу және басқару.</p>
         <a href="a_events.html" class="btn">Кіру</a>
     </div>
 
     <div class="card">
-        
         <h3>Жоспарлар</h3>
-        <p>Жоспарларды қосу, өзгерту және жою мүмкіндігі.</p>
+        <p>Күнтізбе жоспарларын қосу және өзгерту.</p>
         <a href="a_plans.html" class="btn">Кіру</a>
     </div>
 
     <div class="card">
-       
         <h3>Жетістіктер</h3>
-        <p>Оқушылардың жетістіктерін басқаруға арналған бөлім.</p>
+        <p>Оқушылардың жетістіктерін басқару.</p>
         <a href="a_achievements.html" class="btn">Кіру</a>
     </div>
 
