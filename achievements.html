@@ -9,60 +9,77 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <style>
-body{
-    font-family: Arial;
-    background:#f4f5f7;
-    margin:0;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+body{background:#f4f5f7;color:#2c3e50;}
+.container{width:90%;max-width:1200px;margin:auto;}
 
-.container{
-    width:90%;
-    max-width:1000px;
-    margin:auto;
-}
+header{background:white;padding:20px 0;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.nav{display:flex;justify-content:space-between;align-items:center;}
+.logo img{width:60px;}
+
+nav ul{display:flex;list-style:none;gap:30px;}
+nav a{text-decoration:none;color:#2c3e50;font-weight:500;}
+nav a:hover{color:#8b1e2d;}
+
+.title{text-align:center;margin:50px 0 40px;}
+.title h1{font-size:40px;color:#1f3c88;}
 
 .achievement{
-    display:flex;
-    gap:20px;
-    background:white;
-    margin:20px 0;
-    padding:15px;
-    border-radius:10px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+display:flex;
+gap:30px;
+background:white;
+margin-bottom:30px;
+padding:20px;
+border-radius:10px;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+align-items:center;
 }
 
 .achievement img{
-    width:200px;
-    height:140px;
-    object-fit:cover;
-    border-radius:8px;
+width:260px;
+height:180px;
+object-fit:cover;
+border-radius:8px;
 }
 
 .reactions button{
-    margin-right:8px;
-    padding:6px 10px;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-    background:#eee;
+margin-right:10px;
+padding:6px 10px;
+border:none;
+border-radius:6px;
+background:#eee;
+cursor:pointer;
 }
 
-.reactions button.active{
-    background:#d0dcff;
-    font-weight:bold;
+@media(max-width:800px){
+.achievement{flex-direction:column;text-align:center;}
+.achievement img{width:100%;height:200px;}
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h1>Жетістіктер</h1>
-    <div id="list"></div>
+<header>
+<div class="container nav">
+<div class="logo"><img src="logo.png"></div>
+<nav>
+<ul>
+<li><a href="index.html">Басты бет</a></li>
+<li><a href="events.html">Іс-шаралар</a></li>
+<li><a href="plans.html">Жоспарлар</a></li>
+<li><a href="achievements.html">Жетістіктер</a></li>
+</ul>
+</nav>
 </div>
+</header>
+
+<section class="container">
+<div class="title"><h1>Оқушылардың жетістіктері</h1></div>
+<div id="achievements-list"></div>
+</section>
 
 <script>
-/* 🔥 Firebase */
 const firebaseConfig = {
   apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
   authDomain: "nis-dorm.firebaseapp.com",
@@ -75,108 +92,65 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* 👤 fake user */
-let userId = localStorage.getItem("userId");
-if (!userId) {
-    userId = "user_" + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem("userId", userId);
-}
+const container = document.getElementById("achievements-list");
 
-const list = document.getElementById("list");
-
-/* 🔥 REALTIME */
+/* 🔥 REALTIME RENDER */
 db.collection("achievements")
-.orderBy("createdAt","desc")
-.onSnapshot(snapshot => {
+  .orderBy("createdAt", "desc")
+  .onSnapshot(snapshot => {
+      container.innerHTML = "";
 
-    list.innerHTML = "";
+      snapshot.forEach(doc => {
+          const a = doc.data();
 
-    snapshot.forEach(doc => {
-        const a = doc.data();
+          const block = document.createElement("div");
+          block.className = "achievement";
 
-        const userReaction = a.reactionsByUser?.[userId] || null;
+          const img = document.createElement("img");
+          img.src = a.image || "default.jpg";
 
-        const div = document.createElement("div");
-        div.className = "achievement";
+          const content = document.createElement("div");
 
-        div.innerHTML = `
-            <img src="${a.image || 'https://via.placeholder.com/200'}">
+          const title = document.createElement("h2");
+          title.textContent = a.title || "Без названия";
 
-            <div>
-                <h2>${a.title || ""}</h2>
-                <p>${a.description || ""}</p>
+          const desc = document.createElement("p");
+          desc.textContent = a.description || "";
 
-                <div class="reactions">
-                    <button onclick="toggleReaction('${doc.id}','likes')"
-                    class="${userReaction==='likes'?'active':''}">
-                        👍 ${a.likes || 0}
-                    </button>
+          const reactions = document.createElement("div");
+          reactions.className = "reactions";
 
-                    <button onclick="toggleReaction('${doc.id}','loves')"
-                    class="${userReaction==='loves'?'active':''}">
-                        ❤️ ${a.loves || 0}
-                    </button>
+          reactions.innerHTML = `
+              <button onclick="addReaction('${doc.id}','likes')">
+                  👍 ${a.likes || 0}
+              </button>
+              <button onclick="addReaction('${doc.id}','loves')">
+                  ❤️ ${a.loves || 0}
+              </button>
+              <button onclick="addReaction('${doc.id}','fires')">
+                  🔥 ${a.fires || 0}
+              </button>
+          `;
 
-                    <button onclick="toggleReaction('${doc.id}','fires')"
-                    class="${userReaction==='fires'?'active':''}">
-                        🔥 ${a.fires || 0}
-                    </button>
-                </div>
-            </div>
-        `;
+          content.appendChild(title);
+          content.appendChild(desc);
+          content.appendChild(reactions);
 
-        list.appendChild(div);
-    });
-});
+          block.appendChild(img);
+          block.appendChild(content);
 
-/* ⚡ TOGGLE REACTION */
-async function toggleReaction(id, newReaction){
+          container.appendChild(block);
+      });
+  });
 
+/* ⚡ REACTIONS */
+async function addReaction(id, field){
     const ref = db.collection("achievements").doc(id);
 
-    await db.runTransaction(async (t) => {
-
-        const doc = await t.get(ref);
-        const data = doc.data();
-
-        if (!data) return;
-
-        const reactionsByUser = data.reactionsByUser || {};
-        const oldReaction = reactionsByUser[userId];
-
-        let updates = {};
-
-        // ❌ снять реакцию если нажали ту же
-        if (oldReaction === newReaction) {
-            updates[`reactionsByUser.${userId}`] =
-                firebase.firestore.FieldValue.delete();
-
-            updates[oldReaction] =
-                firebase.firestore.FieldValue.increment(-1);
-        }
-
-        // 🔁 смена реакции
-        else {
-            if (oldReaction) {
-                updates[oldReaction] =
-                    firebase.firestore.FieldValue.increment(-1);
-            }
-
-            updates[newReaction] =
-                firebase.firestore.FieldValue.increment(1);
-
-            updates[`reactionsByUser.${userId}`] = newReaction;
-        }
-
-        t.update(ref, updates);
-    })
-    .catch(err => {
-        console.error("ERROR:", err);
+    await ref.update({
+        [field]: firebase.firestore.FieldValue.increment(1)
     });
 }
-
-/* важно */
-window.toggleReaction = toggleReaction;
 </script>
 
 </body>
