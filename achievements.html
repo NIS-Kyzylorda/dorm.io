@@ -1,3 +1,135 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Жетістіктер</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<style>
+body{
+    font-family: Arial;
+    background:#f4f5f7;
+    margin:0;
+}
+
+.container{
+    width:90%;
+    max-width:1000px;
+    margin:auto;
+}
+
+.achievement{
+    display:flex;
+    gap:20px;
+    background:white;
+    margin:20px 0;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+}
+
+.achievement img{
+    width:200px;
+    height:140px;
+    object-fit:cover;
+    border-radius:8px;
+}
+
+.reactions button{
+    margin-right:8px;
+    padding:6px 10px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    background:#eee;
+}
+
+.reactions button.active{
+    background:#d0dcff;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Жетістіктер</h1>
+    <div id="list"></div>
+</div>
+
+<script>
+/* 🔥 FIREBASE */
+const firebaseConfig = {
+  apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
+  authDomain: "nis-dorm.firebaseapp.com",
+  projectId: "nis-dorm",
+  storageBucket: "nis-dorm.appspot.com",
+  messagingSenderId: "34661486520",
+  appId: "1:34661486520:web:3b6d3bd38c2d6fa7e0c94d"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* 👤 fake user */
+let userId = localStorage.getItem("userId");
+if (!userId) {
+    userId = "user_" + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem("userId", userId);
+}
+
+const list = document.getElementById("list");
+
+/* 🔥 REALTIME */
+db.collection("achievements")
+.orderBy("createdAt","desc")
+.onSnapshot(snapshot => {
+
+    list.innerHTML = "";
+
+    snapshot.forEach(doc => {
+        const a = doc.data();
+
+        const userReaction = a.reactionsByUser?.[userId] || null;
+
+        const div = document.createElement("div");
+        div.className = "achievement";
+
+        div.innerHTML = `
+            <img src="${a.image || 'https://via.placeholder.com/200'}">
+
+            <div>
+                <h2>${a.title || ""}</h2>
+                <p>${a.description || ""}</p>
+
+                <div class="reactions">
+                    <button onclick="toggleReaction('${doc.id}','likes')"
+                    class="${userReaction==='likes'?'active':''}">
+                        👍 ${a.likes || 0}
+                    </button>
+
+                    <button onclick="toggleReaction('${doc.id}','loves')"
+                    class="${userReaction==='loves'?'active':''}">
+                        ❤️ ${a.loves || 0}
+                    </button>
+
+                    <button onclick="toggleReaction('${doc.id}','fires')"
+                    class="${userReaction==='fires'?'active':''}">
+                        🔥 ${a.fires || 0}
+                    </button>
+                </div>
+            </div>
+        `;
+
+        list.appendChild(div);
+    });
+});
+
+/* ⚡ ONE TIME REACTION */
 async function toggleReaction(id, newReaction){
 
     const ref = db.collection("achievements").doc(id);
@@ -11,15 +143,15 @@ async function toggleReaction(id, newReaction){
 
         const reactionsByUser = data.reactionsByUser || {};
 
-        // 🚫 если уже есть реакция — ничего не делаем
+        // 🚫 если уже ставил реакцию — ничего не делаем
         if (reactionsByUser[userId]) {
-            console.log("already reacted, locked");
+            console.log("reaction already set");
             return;
         }
 
         let updates = {};
 
-        // 👍 ставим реакцию
+        // ➕ ставим реакцию
         updates[newReaction] =
             firebase.firestore.FieldValue.increment(1);
 
@@ -31,3 +163,10 @@ async function toggleReaction(id, newReaction){
         console.error("ERROR:", err);
     });
 }
+
+/* важно */
+window.toggleReaction = toggleReaction;
+</script>
+
+</body>
+</html>
