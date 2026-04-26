@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIS жатақхана</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f5f7;
+    color: #2c3e50;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* HEADER */
+header {
+    background: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1f3c88;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: #8b1e2d;
+}
+
+/* HERO SECTION */
+.hero {
+    position: relative;
+    height: 450px;
+    background: url("class.jpg") center/cover no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    top: 0;
+    left: 0;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 12px 25px;
+    background: #8b1e2d;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #6d1622;
+}
+
+/* CARDS */
+.cards {
+    margin-top: 60px;
+    display: flex;
+    gap: 30px;
+    justify-content: space-between;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+    width: 100%;
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card h3 {
+    margin-bottom: 10px;
+}
+
+.card p {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+.card .btn {
+    display: inline-block;
+    font-size: 14px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .cards {
+        flex-direction: column;
+    }
+}
+
+.hero {
+    background-image: url("bg 1.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    height: 40vh; /* на весь экран */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+}
+
+.hero-content {
+    text-align: center;
+    color: white;
+    z-index: 2;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.4); /* затемнение */
+}
+
+.logo img {
+    width: 20%;
+    height: 20%;
+    object-fit: contain; /* чтобы не искажался */
+}
+</style>
+
+</head>
+<body>
+
+<header>
+    <div class="container nav">
+        <div class="logo">
+             <img src="logo.png" alt="logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Басты бет</a></li>
+                <li><a href="events.html">Іс-шаралар</a></li>
+                <li><a href="plans.html">Жоспарлар</a></li>
+                <li><a href="achievements.html">Жетістіктер</a></li>
+              
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Біздің жатақхана өмірі</h1>
+        <a href="dorm.html" class="btn">Толығырақ көру</a>
+    </div>
+</section>
+
+<section class="container cards">
+
+    <div class="card">
+        <img src="https://ustaz.nis.edu.kz/images/homepage/homepage-carousel/7.webp" alt="...">
+        <div class="card-content">
+            <h3>Оқушыларға</h3>
+            <p></p>
+            <a href="students.html" class="btn">Толығырақ көру</a>
+        </div>
+    </div>
+
+
+        <div class="card">
+    <img src="https://ustaz.nis.edu.kz/images/homepage/homepage-carousel/2.webp" alt="..." style="width: 100%; height: auto;">
+    <div class="card-content">
+        <h3>Ата-аналарға</h3>
+        <p> </p>
+        <a href="parents.html" class="btn">Толығырақ көру</a>
+    </div>
+    </div>
+
+
+    <div class="card">
+        <img src="https://ustaz.nis.edu.kz/images/homepage/homepage-carousel/5.webp" alt="...">
+        <div class="card-content">
+            <h3>Тәрбиешілерге</h3>
+            <p></p>
+            <a href="supervisors.html" class="btn">Толығырақ көру</a>
+        </div>
+    </div>
+
+</section>
+<footer style="background-color: #e0e0e0; padding: 30px 0; margin-top: 50px;">
+    <div class="container" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px;">
+        
+        <div style="flex: 1; min-width: 200px;">
+            <h3 style="color: #2c3e50; margin-bottom: 10px;">Мекенжай</h3>
+            <p style="color: #555;">Қазақстан Республикасы 120000, Қызылорда қ., Султан Бейбарыс 6</p>
+        </div>
+        
+        <div style="flex: 1; min-width: 200px;">
+            <h3 style="color: #2c3e50; margin-bottom: 10px;">Телефон</h3>
+            <p style="color: #555;">+7 701 901 29 89</p>
+        </div>
+        
+        <div style="flex: 1; min-width: 200px;">
+            <h3 style="color: #2c3e50; margin-bottom: 10px;">Email</h3>
+            <p style="color: #555;">turganbaeva_A@kzl.nis.edu.kz</p>
+        </div>
+        
+    </div>
+    <p style="text-align: center; color: #777; margin-top: 20px; font-size: 14px;">
+        © 2026 NIS Kyzylorda
+    </p>
+</footer>
+</body>
+</html>

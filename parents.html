@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIS жатақхана</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+.carousel-section {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.carousel {
+    width: 50%;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.slides {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.slide {
+    min-width: 100%;
+}
+
+.slide img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+}
+
+.carousel-text {
+    width: 50%;
+}
+
+/* mobile fix */
+@media (max-width: 900px) {
+    .carousel-section {
+        flex-direction: column;
+    }
+
+    .carousel,
+    .carousel-text {
+        width: 100%;
+    }
+}
+body {
+    background-color: #f4f5f7;
+    color: #2c3e50;
+    line-height: 1.6;
+}
+
+/* CONTAINER */
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: auto;
+}
+
+/* HEADER */
+header {
+    background: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo img {
+    width: 120px;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: #8b1e2d;
+}
+
+/* HERO / INTRO */
+.hero {
+    margin-top: 40px;
+    padding: 20px 0;
+}
+
+.hero h1 {
+    font-size: 28px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    margin-bottom: 10px;
+}
+
+/* SECTION TITLE */
+.section-title {
+    margin: 50px 0 20px;
+    font-size: 22px;
+    border-left: 4px solid #8b1e2d;
+    padding-left: 10px;
+}
+
+/* CARDS */
+.card {
+    display: flex;
+    gap: 30px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.card img {
+    width: 50%;
+    object-fit: cover;
+}
+
+.card-text {
+    padding: 20px;
+    width: 50%;
+}
+
+/* LINK */
+a.pdf-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #1f3c88;
+    font-weight: bold;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .card {
+        flex-direction: column;
+    }
+
+    .card img,
+    .card-text {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container nav">
+        <div class="logo">
+            <img src="logo.png" alt="logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Басты бет</a></li>
+                <li><a href="events.html">Іс-шаралар</a></li>
+                <li><a href="plans.html">Жоспарлар</a></li>
+                <li><a href="achievements.html">Жетістіктер</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="container hero">
+    <h1>Жатақхана туралы</h1>
+
+    <p>Жатақханада білім алу процесімен қатар, күнделікті өмір тәртібі де ұйымдастырылады. Оқушылар сабаққа дайындалып, демалады және түрлі оқу және тәрбие іс-шараларына қатысады. Тәртіп пен қауіпсіздік — негізгі қағида.</p>
+
+    <a class="pdf-link" href="dormitory-kz.pdf" target="_blank">
+        Жатақхана ережелері →
+    </a>
+</section>
+
+<!-- LIVING CONDITIONS -->
+ <!-- CAROUSEL BLOCK 1 -->
+<section class="container carousel-section">
+
+    <div class="carousel">
+        <div class="slides">
+            <div class="slide"><img src="dorm1.jpg"></div>
+            <div class="slide"><img src="dorm2.jpg"></div>
+        </div>
+    </div>
+
+    <div class="carousel-text">
+        <div class="section-title">Бөлмелер</div>
+        <p>
+            Бөлмелер оқушыларға жайлы және қауіпсіз өмір сүру үшін жабдықталған.
+Әр бөлмеде оқу орны, төсек және сақтау шкафтары бар.
+Санитарлық жағдайлар тұрақты түрде тазаланып, гигиеналық талаптарға сай ұсталады. Санузелдер мен жуыну бөлмелері барлық қажетті жағдайлармен қамтамасыз етілген және оқушылардың күнделікті қолдануына ыңғайлы.
+        </p>
+    </div>
+
+</section>
+<section class="container carousel-section">
+
+    <div class="carousel">
+        <div class="slides">
+            <div class="slide"><img src="dorm3.jpg"></div>
+        </div>
+    </div>
+
+    <div class="carousel-text">
+        <div class="section-title">Оқу орны</div>
+        <p>
+           Жатақхана аумағында тыныштық, тәртіп және өзара сыйластық сақталады. Оқушылар белгіленген ережелерді сақтап, ортақ кеңістікті ұқыпты пайдаланады. Әр оқушы өз әрекетіне жауапкершілікпен қарап, жатақханадағы қауіпсіз әрі қолайлы атмосфераны сақтауға үлес қосады.
+        </p>
+    </div>
+
+</section>
+
+<script>
+    let carousels = document.querySelectorAll(".carousel");
+
+carousels.forEach((carousel) => {
+    let slides = carousel.querySelector(".slides");
+    let totalSlides = carousel.querySelectorAll(".slide").length;
+    let currentSlide = 0;
+
+    setInterval(() => {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+    }, 3000);
+});
+</script>
+
+</body>
+</html>

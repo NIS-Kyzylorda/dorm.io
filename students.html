@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIS жатақхана</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f5f7;
+    color: #2c3e50;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* HEADER */
+header {
+    background: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1f3c88;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: #8b1e2d;
+}
+
+/* HERO SECTION */
+.hero {
+    position: relative;
+    height: 450px;
+    background: url("class.jpg") center/cover no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    top: 0;
+    left: 0;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 12px 25px;
+    background: #8b1e2d;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #6d1622;
+}
+
+/* CARDS */
+.cards {
+    margin-top: 60px;
+    display: flex;
+    gap: 30px;
+    justify-content: space-between;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+    width: 100%;
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card h3 {
+    margin-bottom: 10px;
+}
+
+.card p {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+.card .btn {
+    display: inline-block;
+    font-size: 14px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .cards {
+        flex-direction: column;
+    }
+}
+
+.hero {
+    background-image: url("bg 1.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    height: 40vh; /* на весь экран */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+}
+
+.hero-content {
+    text-align: center;
+    color: white;
+    z-index: 2;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.4); /* затемнение */
+}
+
+.logo img {
+    width: 20%;
+    height: 20%;
+    object-fit: contain; /* чтобы не искажался */
+}
+</style>
+
+</head>
+<body>
+
+<header>
+    <div class="container nav">
+        <div class="logo">
+             <img src="logo.png" alt="logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Басты бет</a></li>
+                <li><a href="events.html">Іс-шаралар</a></li>
+                <li><a href="plans.html">Жоспарлар</a></li>
+                <li><a href="achievements.html">Жетістіктер</a></li>
+              
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Оқушыларға</h1>
+        <p>Жатақханадағы өмір, мүмкіндіктер және пайдалы кеңестер</p>
+    </div>
+</section>
+<section class="container cards">
+
+    <div class="card">
+        <img src="https://schools.nis.edu.kz/storage/news/01J5Q268HSFT550A7M2RX9F948.webp">
+        <div class="card-content">
+            <h3>Шығармашылық</h3>
+            <p>Музыка, өнер және түрлі шығармашылық үйірмелерде өз талантыңды дамыт.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <img src="https://knadmin.beoblood.kz/uploads/nish2_69b0ab83ce.jpg">
+        <div class="card-content">
+            <h3>Спорт</h3>
+            <p>Футбол, волейбол, баскетбол және басқа спорт түрлері арқылы денсаулығыңды нығайт.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <img src="https://www.nis.edu.kz/storage/resource_icons/01JM1M1G10QCFRGAWTZKGFZTDV.webp">
+        <div class="card-content">
+            <h3>Білім</h3>
+            <p>Сабақтан тыс уақытта қосымша дайындалып, өз деңгейіңді арттыр.</p>
+        </div>
+    </div>
+
+    <!-- НОВЫЙ БЛОК -->
+    <div class="card">
+        <img src="https://bilimdinews.kz/wp-content/uploads/2021/12/MG_1312.jpg">
+        <div class="card-content">
+            <h3>Өзін-өзі басқару</h3>
+            <p>Мектептің өзін-өзі басқару ұйымына қосылып, көшбасшылық қабілеттеріңді дамыт және іс-шараларды ұйымдастыруға қатыс.</p>
+        </div>
+    </div>
+
+</section>
+</section>
+</body>
+</html>

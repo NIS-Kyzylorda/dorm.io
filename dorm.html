@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIS жатақхана</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f5f7;
+    color: #2c3e50;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* HEADER */
+header {
+    background: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo img {
+    width: 120px;
+}
+
+/* NAV */
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: #8b1e2d;
+}
+
+/* CAROUSEL + TEXT */
+.carousel-section {
+    display: flex;
+    gap: 40px;
+    margin-top: 50px;
+    align-items: center;
+}
+
+.carousel {
+    width: 50%;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.slides {
+    display: flex;
+    width: 100%;
+    transition: transform 0.5s ease;
+}
+
+/* ВАЖНОЕ ДОБАВЛЕНИЕ */
+.slide {
+    min-width: 100%;
+}
+
+.slide img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+}
+
+.carousel-text {
+    width: 50%;
+    font-size: 16px;
+    color: #444;
+    line-height: 1.6;
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+    .carousel-section {
+        flex-direction: column;
+    }
+
+    .carousel,
+    .carousel-text {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container nav">
+        <div class="logo">
+            <img src="logo.png" alt="logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Басты бет</a></li>
+                <li><a href="events.html">Іс-шаралар</a></li>
+                <li><a href="plans.html">Жоспарлар</a></li>
+                <li><a href="achievements.html">Жетістіктер</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- SECTION -->
+<section class="carousel-section container">
+
+    <!-- CAROUSEL -->
+    <div class="carousel">
+        <div class="slides">
+            <div class="slide"><img src="dorm1.jpeg"></div>
+            <div class="slide"><img src="dorm2.jpeg"></div>
+            <div class="slide"><img src="dorm3.jpeg"></div>
+            <div class="slide"><img src="dorm4.jpeg"></div>
+        </div>
+    </div>
+
+    <!-- TEXT -->
+    <div class="carousel-text">
+        <p>Біздің жатақхана – оқушылар үшін екінші үй. Мұнда әрбір күні қызықты әрі пайдалы өтеді: таңғы жаттығулар мен сабақтардан кейінгі демалыс уақытында оқушылар спортпен айналысады, музыкалық және шығармашылық үйірмелерде өз таланттарын дамытады.</p> 
+
+        <p>Жатақхана өмірінде тәртіп пен достық бір-бірімен үйлесімді жүреді. Оқушылар бірге тамақтанады, таза және жайлы ортада демалады, оқу мен ойын арасында теңгерімді сақтайды. Мұнда әркімнің қызығушылығы ескеріледі: кімдер болса да өзіне ұнайтын іс-шараға қатыса алады.</p>
+
+        <p>Сонымен қатар, тәрбиешілер әрқашан оқушылардың жан-жақты дамуына көңіл бөледі: олармен әңгімелесіп, жаңа жобаларға жетекшілік жасайды, сабақтан тыс уақытта қызықты тренингтер мен ойындар өткізеді. Жатақханалық өмірде ұжымдық жұмыс пен жауапкершілік сезімі қалыптасады, достық пен сыйластықты арттырады.</p>
+
+         </div>
+
+</section>
+<section class="container" style="margin-top: 40px; margin-bottom: 60px;">
+    <div style=" border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+
+
+        <p style="margin-bottom: 15px; line-height: 1.7; color: #555;">
+            Жатақхана тек тұратын орын ғана емес, ол – оқушылардың жеке тұлға ретінде қалыптасатын ортасы. Мұнда әрбір оқушы өз уақытын жоспарлауды, жауапкершілікті сезінуді және ұжымда жұмыс істеуді үйренеді.
+        </p>
+
+        <p style="margin-bottom: 15px; line-height: 1.7; color: #555;">
+            Күнделікті өмір белгілі бір тәртіппен ұйымдастырылған: сабаққа дайындық, демалыс, спорт және шығармашылық уақыт. Бұл оқушыларға өз күнін тиімді пайдалануға және әртүрлі бағытта дамуға мүмкіндік береді.
+        </p>
+
+        <p style="line-height: 1.7; color: #555;">
+            Сонымен қатар, жатақханада өткізілетін түрлі іс-шаралар мен кештер оқушылардың бір-бірімен жақындасуына, жаңа достар табуына және ұмытылмас естеліктер қалыптастыруына ықпал етеді.
+        </p>
+
+    </div>
+</section>
+ 
+<!-- JS -->
+<script>
+let currentSlide = 0;
+const slides = document.querySelector(".slides");
+const totalSlides = document.querySelectorAll(".slide").length;
+
+setInterval(() => {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+}, 3000);
+</script>
+
+</body>
+</html>
