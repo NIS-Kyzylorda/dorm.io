@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Іс-шаралар</title>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
 body{background:#f4f5f7;color:#2c3e50;}
@@ -37,8 +39,6 @@ color:#2c3e50;
 font-weight:500;
 }
 
-nav a:hover{color:#8b1e2d;}
-
 .title{
 text-align:center;
 margin:50px 0 40px;
@@ -60,17 +60,11 @@ box-shadow:0 4px 12px rgba(0,0,0,0.08);
 align-items:flex-start;
 }
 
-.carousel{
+.event img{
 width:260px;
 height:180px;
-overflow:hidden;
-border-radius:8px;
-}
-
-.carousel img{
-width:100%;
-height:100%;
 object-fit:cover;
+border-radius:8px;
 }
 
 .event-text h2{color:#1f3c88;margin-bottom:10px;}
@@ -99,11 +93,6 @@ cursor:pointer;
 margin-top:10px;
 font-size:14px;
 }
-
-@media(max-width:800px){
-.event{flex-direction:column;}
-.carousel{width:100%;height:200px;}
-}
 </style>
 </head>
 
@@ -129,7 +118,9 @@ font-size:14px;
 <div id="events-list"></div>
 </section>
 
-<script>const firebaseConfig = {
+<script>
+// 🔥 FIREBASE INIT
+const firebaseConfig = {
   apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
   authDomain: "nis-dorm.firebaseapp.com",
   projectId: "nis-dorm",
@@ -143,7 +134,7 @@ const db = firebase.firestore();
 
 const container = document.getElementById("events-list");
 
-/* 🔥 LOAD EVENTS */
+// 💥 LOAD REALTIME EVENTS
 db.collection("events")
 .orderBy("createdAt", "desc")
 .onSnapshot(snapshot => {
@@ -156,87 +147,21 @@ db.collection("events")
 
         const e = doc.data();
 
-        const images = e.image ? [e.image] : [];
-        let current = 0;
-
         const block = document.createElement("div");
         block.className = "event";
 
         block.innerHTML = `
-            <div class="carousel">
-                <img id="img-${doc.id}" src="${images[0] || ''}">
-            </div>
-
+            <img src="${e.image || ''}">
             <div class="event-text">
                 <h2>${e.title || ""}</h2>
                 <p>${e.description || ""}</p>
-
-                <div class="comment-box">
-                    <input id="name-${doc.id}" placeholder="Атыңыз">
-                    <textarea id="text-${doc.id}" placeholder="Пікір"></textarea>
-                    <button onclick="addComment('${doc.id}')">Жіберу</button>
-                </div>
-
-                <div id="comments-${doc.id}"></div>
             </div>
         `;
 
         container.appendChild(block);
-
-        renderComments(doc.id);
     });
 });
-
-/* 💬 COMMENTS (localStorage пока оставляем) */
-function getComments(id){
-return JSON.parse(localStorage.getItem("comments_"+id)) || [];
-}
-
-function saveComments(id,data){
-localStorage.setItem("comments_"+id, JSON.stringify(data));
-}
-
-function renderComments(id){
-const box = document.getElementById("comments-"+id);
-if(!box) return;
-
-const comments = getComments(id);
-box.innerHTML = "";
-
-comments.forEach((c,i)=>{
-const div = document.createElement("div");
-div.className = "comment";
-
-div.innerHTML = `
-<b>${c.name}</b>: ${c.text}
-<button onclick="deleteComment('${id}',${i},'${c.name}')">❌</button>
-`;
-
-box.appendChild(div);
-});
-}
-
-function addComment(id){
-
-const name = document.getElementById("name-"+id).value;
-const text = document.getElementById("text-"+id).value;
-
-if(!name || !text){
-alert("Толтыр");
-return;
-}
-
-let comments = getComments(id);
-comments.push({name,text});
-saveComments(id,comments);
-
-renderComments(id);
-
-document.getElementById("text-"+id).value = "";
-}
 </script>
 
 </body>
 </html>
-
-почему до сих пор не отображаются изменения?
