@@ -10,74 +10,156 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
-body{background:#f4f5f7;color:#2c3e50;}
-.container{width:90%;max-width:1200px;margin:auto;}
-
-header{background:white;padding:20px 0;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
-.nav{display:flex;justify-content:space-between;align-items:center;}
-.logo img{width:60px;}
-
-nav ul{display:flex;list-style:none;gap:30px;}
-nav a{text-decoration:none;color:#2c3e50;font-weight:500;}
-nav a:hover{color:#8b1e2d;}
-
-.title{text-align:center;margin:50px 0 40px;}
-.title h1{font-size:40px;color:#1f3c88;}
-
-.achievement{
-display:flex;
-gap:30px;
-background:white;
-margin-bottom:30px;
-padding:20px;
-border-radius:10px;
-box-shadow:0 4px 12px rgba(0,0,0,0.08);
-align-items:center;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
 }
 
-.achievement img{
-width:260px;
-height:180px;
-object-fit:cover;
-border-radius:8px;
+body {
+    background: #f4f5f7;
+    color: #2c3e50;
 }
 
-.reactions button{
-margin-right:10px;
-padding:6px 10px;
-border:none;
-border-radius:6px;
-background:#eee;
-cursor:pointer;
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
 }
 
-@media(max-width:800px){
-.achievement{flex-direction:column;text-align:center;}
-.achievement img{width:100%;height:200px;}
+/* HEADER */
+header {
+    background: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo img {
+    width: 60px;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: #8b1e2d;
+}
+
+/* TITLE */
+.title {
+    text-align: center;
+    margin: 50px 0 40px;
+}
+
+.title h1 {
+    font-size: 40px;
+    color: #1f3c88;
+}
+
+/* ACHIEVEMENTS */
+.achievement {
+    display: flex;
+    gap: 30px;
+    background: white;
+    margin-bottom: 30px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    align-items: center;
+}
+
+.achievement img {
+    width: 260px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.achievement-text h2 {
+    margin-bottom: 10px;
+    color: #1f3c88;
+}
+
+.achievement-text p {
+    color: #555;
+    line-height: 1.6;
+}
+
+/* REACTIONS */
+.reactions {
+    margin-top: 12px;
+}
+
+.reactions button {
+    margin-right: 10px;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    background: #eee;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.reactions button:hover {
+    background: #ddd;
+}
+
+@media (max-width: 800px) {
+    .achievement {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .achievement img {
+        width: 100%;
+        height: 200px;
+    }
 }
 </style>
+
 </head>
 
 <body>
 
 <header>
-<div class="container nav">
-<div class="logo"><img src="logo.png"></div>
-<nav>
-<ul>
-<li><a href="index.html">Басты бет</a></li>
-<li><a href="events.html">Іс-шаралар</a></li>
-<li><a href="plans.html">Жоспарлар</a></li>
-<li><a href="achievements.html">Жетістіктер</a></li>
-</ul>
-</nav>
-</div>
+    <div class="container nav">
+        <div class="logo">
+            <img src="logo.png" alt="logo">
+        </div>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Басты бет</a></li>
+                <li><a href="events.html">Іс-шаралар</a></li>
+                <li><a href="plans.html">Жоспарлар</a></li>
+                <li><a href="achievements.html">Жетістіктер</a></li>
+            </ul>
+        </nav>
+    </div>
 </header>
 
 <section class="container">
-<div class="title"><h1>Оқушылардың жетістіктері</h1></div>
-<div id="achievements-list"></div>
+    <div class="title">
+        <h1>Оқушылардың жетістіктері</h1>
+    </div>
+
+    <div id="achievements-list"></div>
 </section>
 
 <script>
@@ -99,13 +181,15 @@ const container = document.getElementById("achievements-list");
 
 /* 📥 LOAD */
 async function render(){
+
     container.innerHTML = "";
 
     const snapshot = await db.collection("achievements")
-        .orderBy("createdAt","desc")
+        .orderBy("createdAt", "desc")
         .get();
 
     snapshot.forEach(doc => {
+
         let a = doc.data();
 
         const block = document.createElement("div");
@@ -113,20 +197,20 @@ async function render(){
 
         block.innerHTML = `
             <img src="${a.image}">
-            <div>
+            <div class="achievement-text">
                 <h2>${a.title}</h2>
                 <p>${a.description}</p>
 
                 <div class="reactions">
-                    <button onclick="addReaction('${doc.id}','likes')">
+                    <button onclick="toggleReaction('${doc.id}','like')">
                         👍 ${a.likes || 0}
                     </button>
 
-                    <button onclick="addReaction('${doc.id}','loves')">
+                    <button onclick="toggleReaction('${doc.id}','love')">
                         ❤️ ${a.loves || 0}
                     </button>
 
-                    <button onclick="addReaction('${doc.id}','fires')">
+                    <button onclick="toggleReaction('${doc.id}','fire')">
                         🔥 ${a.fires || 0}
                     </button>
                 </div>
@@ -137,12 +221,29 @@ async function render(){
     });
 }
 
-/* ⚡ НОРМАЛЬНЫЕ РЕАКЦИИ */
-async function addReaction(id, field){
+/* ⚡ REACTIONS (FIREBASE VERSION) */
+async function toggleReaction(id, type){
+
     const ref = db.collection("achievements").doc(id);
+    const docSnap = await ref.get();
+
+    if(!docSnap.exists()) return;
+
+    let data = docSnap.data();
+
+    data.likes = data.likes || 0;
+    data.loves = data.loves || 0;
+    data.fires = data.fires || 0;
+
+    const field = type + "s";
+
+    // просто увеличиваем (без userReaction пока — упрощённая версия)
+    data[field] = (data[field] || 0) + 1;
 
     await ref.update({
-        [field]: firebase.firestore.FieldValue.increment(1)
+        likes: data.likes,
+        loves: data.loves,
+        fires: data.fires
     });
 
     render();
@@ -154,3 +255,4 @@ render();
 
 </body>
 </html>
+
