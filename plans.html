@@ -187,9 +187,34 @@ z-index:10;
 
 </div>
 
-<script>
+<script>let currentDate = new Date();
 
-let currentDate = new Date();
+const firebaseConfig = {
+  apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
+  authDomain: "nis-dorm.firebaseapp.com",
+  projectId: "nis-dorm",
+  storageBucket: "nis-dorm.appspot.com",
+  messagingSenderId: "34661486520",
+  appId: "1:34661486520:web:3b6d3bd38c2d6fa7e0c94d"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let plans = {};
+
+async function loadPlansFromFirebase(){
+    plans = {};
+
+    const snapshot = await db.collection("plans").get();
+
+    snapshot.forEach(doc=>{
+        const data = doc.data();
+        plans[data.date] = data.text;
+    });
+
+    generateCalendar();
+}
 
 function generateCalendar(){
 
@@ -197,14 +222,6 @@ const calendar=document.getElementById("calendar");
 const monthTitle=document.getElementById("monthTitle");
 
 calendar.innerHTML="";
-
-/* планы */
-const plansArray = JSON.parse(localStorage.getItem("plans_admin")) || [];
-const plans = {};
-
-plansArray.forEach(plan=>{
-plans[plan.date] = plan.text;
-});
 
 const year=currentDate.getFullYear();
 const month=currentDate.getMonth();
@@ -246,7 +263,7 @@ const fullDate=
 
 dayDiv.innerHTML=`<span>${i}</span>`;
 
-/* plan exists */
+/* EVENT */
 if(plans[fullDate]){
 
 dayDiv.classList.add("has-plan");
@@ -263,7 +280,7 @@ calendar.appendChild(dayDiv);
 
 }
 
-/* MOBILE + PC CLICK FIX */
+/* click tooltip */
 document.addEventListener("click", function (e) {
 
 document.querySelectorAll(".tooltip").forEach(t=>{
@@ -285,11 +302,11 @@ currentDate.setMonth(currentDate.getMonth()+step);
 generateCalendar();
 }
 
-generateCalendar();
+loadPlansFromFirebase();
 
-window.addEventListener("storage",generateCalendar);
-
-</script>
+db.collection("plans").onSnapshot(()=>{
+    loadPlansFromFirebase();
+});</script>
 
 </body>
 </html>
