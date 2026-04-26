@@ -61,9 +61,7 @@ body{
     <div id="list"></div>
 </div>
 
-<script>
-/* 🔥 FIREBASE */
-const firebaseConfig = {
+<script>const firebaseConfig = {
   apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
   authDomain: "nis-dorm.firebaseapp.com",
   projectId: "nis-dorm",
@@ -75,8 +73,9 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* 👤 fake user */
+/* 👤 fake user id */
 let userId = localStorage.getItem("userId");
+
 if (!userId) {
     userId = "user_" + Math.random().toString(36).substr(2, 9);
     localStorage.setItem("userId", userId);
@@ -84,9 +83,9 @@ if (!userId) {
 
 const list = document.getElementById("list");
 
-/* 🔥 REALTIME */
+/* 🔥 LIVE LOAD */
 db.collection("achievements")
-.orderBy("createdAt","desc")
+.orderBy("createdAt", "desc")
 .onSnapshot(snapshot => {
 
     list.innerHTML = "";
@@ -94,7 +93,8 @@ db.collection("achievements")
     snapshot.forEach(doc => {
         const a = doc.data();
 
-        const userReaction = a.reactionsByUser?.[userId] || null;
+        const reactionsByUser = a.reactionsByUser || {};
+        const userReaction = reactionsByUser[userId] || null;
 
         const div = document.createElement("div");
         div.className = "achievement";
@@ -108,17 +108,17 @@ db.collection("achievements")
 
                 <div class="reactions">
                     <button onclick="toggleReaction('${doc.id}','likes')"
-                    class="${userReaction==='likes'?'active':''}">
+                    class="${userReaction === 'likes' ? 'active' : ''}">
                         👍 ${a.likes || 0}
                     </button>
 
                     <button onclick="toggleReaction('${doc.id}','loves')"
-                    class="${userReaction==='loves'?'active':''}">
+                    class="${userReaction === 'loves' ? 'active' : ''}">
                         ❤️ ${a.loves || 0}
                     </button>
 
                     <button onclick="toggleReaction('${doc.id}','fires')"
-                    class="${userReaction==='fires'?'active':''}">
+                    class="${userReaction === 'fires' ? 'active' : ''}">
                         🔥 ${a.fires || 0}
                     </button>
                 </div>
@@ -129,7 +129,7 @@ db.collection("achievements")
     });
 });
 
-/* ⚡ ONE TIME REACTION */
+/* ⚡ REACTION LOGIC (FIXED) */
 async function toggleReaction(id, newReaction){
 
     const ref = db.collection("achievements").doc(id);
@@ -137,34 +137,36 @@ async function toggleReaction(id, newReaction){
     await db.runTransaction(async (t) => {
 
         const doc = await t.get(ref);
+        if (!doc.exists) return;
+
         const data = doc.data();
 
-        if (!data) return;
-
         const reactionsByUser = data.reactionsByUser || {};
-
-        // 🚫 если уже ставил реакцию — ничего не делаем
-        if (reactionsByUser[userId]) {
-            console.log("reaction already set");
-            return;
-        }
+        const oldReaction = reactionsByUser[userId];
 
         let updates = {};
 
-        // ➕ ставим реакцию
+        // ❌ если уже была реакция — убираем старую
+        if (oldReaction) {
+            updates[oldReaction] =
+                firebase.firestore.FieldValue.increment(-1);
+        }
+
+        // ➕ ставим новую реакцию
         updates[newReaction] =
             firebase.firestore.FieldValue.increment(1);
 
+        // 💾 сохраняем выбор пользователя
         updates[`reactionsByUser.${userId}`] = newReaction;
 
         t.update(ref, updates);
     })
     .catch(err => {
-        console.error("ERROR:", err);
+        console.error("Reaction error:", err);
     });
 }
 
-/* важно */
+/* global access for onclick */
 window.toggleReaction = toggleReaction;
 </script>
 
