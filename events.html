@@ -4,34 +4,114 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Іс-шаралар</title>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
 body{background:#f4f5f7;color:#2c3e50;}
 .container{width:90%;max-width:1200px;margin:auto;}
-header{background:white;padding:20px 0;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
-.nav{display:flex;justify-content:space-between;align-items:center;}
+
+header{
+background:white;
+padding:20px 0;
+box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+
+.nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
 .logo img{width:60px;}
-nav ul{display:flex;list-style:none;gap:30px;}
-nav a{text-decoration:none;color:#2c3e50;font-weight:500;}
+
+nav ul{
+display:flex;
+list-style:none;
+gap:30px;
+}
+
+nav a{
+text-decoration:none;
+color:#2c3e50;
+font-weight:500;
+}
+
 nav a:hover{color:#8b1e2d;}
-.title{text-align:center;margin:50px 0 40px;}
-.title h1{font-size:40px;color:#1f3c88;}
-.event{display:flex;gap:30px;background:white;margin-bottom:30px;padding:20px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.08);align-items:center;}
-.carousel{position:relative;width:260px;height:180px;overflow:hidden;border-radius:8px;}
-.carousel img{width:100%;height:100%;object-fit:cover;}
-.event-text h2{margin-bottom:10px;color:#1f3c88;}
+
+.title{
+text-align:center;
+margin:50px 0 40px;
+}
+
+.title h1{
+font-size:40px;
+color:#1f3c88;
+}
+
+.event{
+display:flex;
+gap:30px;
+background:white;
+margin-bottom:30px;
+padding:20px;
+border-radius:10px;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+align-items:flex-start;
+}
+
+.carousel{
+width:260px;
+height:180px;
+overflow:hidden;
+border-radius:8px;
+}
+
+.carousel img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.event-text h2{color:#1f3c88;margin-bottom:10px;}
 .event-text p{color:#555;line-height:1.6;}
+
+.comment-box input,
+.comment-box textarea{
+width:100%;
+padding:8px;
+margin-top:5px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+.comment-box button{
+margin-top:8px;
+padding:6px 10px;
+background:#8b1e2d;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.comment{
+margin-top:10px;
+font-size:14px;
+}
+
 @media(max-width:800px){
-.event{flex-direction:column;text-align:center;}
+.event{flex-direction:column;}
 .carousel{width:100%;height:200px;}
 }
 </style>
 </head>
+
 <body>
 
 <header>
 <div class="container nav">
 <div class="logo"><img src="logo.png"></div>
+
 <nav>
 <ul>
 <li><a href="index.html">Басты бет</a></li>
@@ -47,117 +127,120 @@ nav a:hover{color:#8b1e2d;}
 <div class="title"><h1>Іс-шаралар</h1></div>
 <div id="events-list"></div>
 </section>
+
 <script>
-const events = JSON.parse(localStorage.getItem("events")) || []
+/*
+🔥 FIREBASE READY STRUCTURE
+(events must come from database later)
+*/
+
+let events = JSON.parse(localStorage.getItem("events")) || []
 const container = document.getElementById("events-list")
-const slideIndex = {}
 
-// загрузка комментариев
-function getComments(index){
-    return JSON.parse(localStorage.getItem("comments_"+index)) || []
+// COMMENTS STORAGE KEY = eventId
+function getComments(id){
+return JSON.parse(localStorage.getItem("comments_"+id)) || []
 }
 
-// сохранение комментариев
-function saveComments(index, comments){
-    localStorage.setItem("comments_"+index, JSON.stringify(comments))
+function saveComments(id, data){
+localStorage.setItem("comments_"+id, JSON.stringify(data))
 }
 
-// рендер комментариев
-function renderComments(index){
-    const commentsBlock = document.getElementById("comments-"+index)
-    const comments = getComments(index)
+// render comments
+function renderComments(id){
+const box = document.getElementById("comments-"+id)
+if(!box) return
 
-    commentsBlock.innerHTML = ""
+const comments = getComments(id)
+box.innerHTML = ""
 
-    comments.forEach((c,i)=>{
-        const div = document.createElement("div")
-        div.style.marginBottom = "10px"
-
-        div.innerHTML = `
-            <b>${c.name}</b>: ${c.text}
-            <button onclick="deleteComment(${index}, ${i}, '${c.name}')">❌</button>
-        `
-        commentsBlock.appendChild(div)
-    })
+comments.forEach((c,i)=>{
+const div = document.createElement("div")
+div.className = "comment"
+div.innerHTML = `
+<b>${c.name}</b>: ${c.text}
+<button onclick="deleteComment('${id}',${i},'${c.name}')">❌</button>
+`
+box.appendChild(div)
+})
 }
 
-// добавить комментарий
-function addComment(index){
-    const name = document.getElementById("name-"+index).value
-    const text = document.getElementById("text-"+index).value
+// add comment
+function addComment(id){
+const name = document.getElementById("name-"+id).value
+const text = document.getElementById("text-"+id).value
 
-    if(!name || !text) return alert("Заполни оба поля")
+if(!name || !text) return alert("Толтыр")
 
-    let comments = getComments(index)
-    comments.push({name, text})
-    saveComments(index, comments)
+let comments = getComments(id)
+comments.push({name,text})
+saveComments(id,comments)
 
-    localStorage.setItem("currentUser", name)
+renderComments(id)
 
-    renderComments(index)
-
-    document.getElementById("text-"+index).value = ""
+document.getElementById("text-"+id).value=""
+localStorage.setItem("currentUser",name)
 }
 
-// удалить комментарий (только свой)
-function deleteComment(eventIndex, commentIndex, author){
-    const currentUser = localStorage.getItem("currentUser")
-
-    if(currentUser !== author){
-        alert("Можно удалить только свой комментарий")
-        return
-    }
-
-    let comments = getComments(eventIndex)
-    comments.splice(commentIndex,1)
-    saveComments(eventIndex, comments)
-
-    renderComments(eventIndex)
+// delete comment
+function deleteComment(eventId, index, author){
+const user = localStorage.getItem("currentUser")
+if(user !== author){
+alert("Тек өз пікіріңді өшіре аласың")
+return
 }
 
-// рендер событий
-function renderEvents() {
-    container.innerHTML = ""
+let comments = getComments(eventId)
+comments.splice(index,1)
+saveComments(eventId,comments)
 
-    events.forEach((event,index)=>{
-        let images = event.images || [event.image]
-        slideIndex[index] = 0
+renderComments(eventId)
+}
 
-        const block = document.createElement("div")
-        block.className = "event"
+// render events
+function renderEvents(){
+container.innerHTML=""
 
-        block.innerHTML = `
-            <div class="carousel">
-                <img id="img-${index}" src="${images[0]}">
-            </div>
+events.forEach((e,id)=>{
 
-            <div class="event-text">
-                <h2>${event.title}</h2>
-                <p>${event.description}</p>
+let images = e.images || [e.image]
+let current = 0
 
-                <div style="margin-top:15px;">
-                    <input id="name-${index}" placeholder="Атыңыз" style="padding:5px;margin-bottom:5px;width:100%;">
-                    <textarea id="text-${index}" placeholder="Пікіріңіз" style="padding:5px;width:100%;"></textarea>
-                    <button onclick="addComment(${index})" style="margin-top:5px;">Жіберу</button>
-                </div>
+const block = document.createElement("div")
+block.className="event"
 
-                <div id="comments-${index}" style="margin-top:15px;"></div>
-            </div>
-        `
+block.innerHTML=`
+<div class="carousel">
+<img id="img-${id}" src="${images[0]}">
+</div>
 
-        container.appendChild(block)
+<div class="event-text">
+<h2>${e.title}</h2>
+<p>${e.description}</p>
 
-        renderComments(index)
+<div class="comment-box">
+<input id="name-${id}" placeholder="Атыңыз">
+<textarea id="text-${id}" placeholder="Пікір"></textarea>
+<button onclick="addComment(${id})">Жіберу</button>
+</div>
 
-        // автокарусель
-        if(images.length > 1){
-            setInterval(()=>{
-                slideIndex[index]++
-                if(slideIndex[index]>=images.length) slideIndex[index]=0
-                document.getElementById("img-"+index).src = images[slideIndex[index]]
-            },3000)
-        }
-    })
+<div id="comments-${id}"></div>
+</div>
+`
+
+container.appendChild(block)
+renderComments(id)
+
+// carousel
+if(images.length>1){
+setInterval(()=>{
+current++
+if(current>=images.length) current=0
+document.getElementById("img-"+id).src = images[current]
+},3000)
+}
+
+})
 }
 
 renderEvents()
