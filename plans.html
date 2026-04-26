@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Жоспарлар</title>
-
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <style>
 
 /* RESET */
@@ -187,126 +188,49 @@ z-index:10;
 
 </div>
 
-<script>let currentDate = new Date();
+<script><script>
+let currentDate = new Date();
 
 const firebaseConfig = {
   apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
-  authDomain: "nis-dorm.firebaseapp.com",
-  projectId: "nis-dorm",
-  storageBucket: "nis-dorm.appspot.com",
-  messagingSenderId: "34661486520",
-  appId: "1:34661486520:web:3b6d3bd38c2d6fa7e0c94d"
+  // ... остальные данные конфига
 };
 
+// 1. Инициализация (уже есть у тебя)
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 let plans = {};
 
+// 2. ВСТАВЛЯЙ СЮДА (Заменяешь свою старую функцию loadPlansFromFirebase на эту)
+generateCalendar(); 
+
 async function loadPlansFromFirebase(){
-    plans = {};
-
-    const snapshot = await db.collection("plans").get();
-
-    snapshot.forEach(doc=>{
-        const data = doc.data();
-        plans[data.date] = data.text;
-    });
-
-    generateCalendar();
+    try {
+        const snapshot = await db.collection("plans").get();
+        plans = {};
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            plans[data.date] = data.text;
+        });
+        generateCalendar(); 
+    } catch (error) {
+        console.error("Деректерді жүктеу қатесі:", error);
+    }
 }
 
-function generateCalendar(){
-
-const calendar=document.getElementById("calendar");
-const monthTitle=document.getElementById("monthTitle");
-
-calendar.innerHTML="";
-
-const year=currentDate.getFullYear();
-const month=currentDate.getMonth();
-
-const months=[
-"Қаңтар","Ақпан","Наурыз","Сәуір","Мамыр","Маусым",
-"Шілде","Тамыз","Қыркүйек","Қазан","Қараша","Желтоқсан"
-];
-
-monthTitle.textContent=months[month]+" "+year;
-
-const firstDay=new Date(year,month,1);
-const lastDay=new Date(year,month+1,0).getDate();
-
-let firstDayIndex=firstDay.getDay();
-let offset=(firstDayIndex===0)?6:firstDayIndex-1;
-
-for(let i=0;i<offset;i++){
-calendar.appendChild(document.createElement("div"));
+// 3. Дальше идут остальные функции (generateCalendar, changeMonth и т.д.), которые у тебя уже написаны
+function generateCalendar() {
+   // твой код функции...
 }
 
-const today=new Date();
-
-for(let i=1;i<=lastDay;i++){
-
-const dayDiv=document.createElement("div");
-dayDiv.className="day";
-
-if(
-i===today.getDate() &&
-month===today.getMonth() &&
-year===today.getFullYear()
-){
-dayDiv.classList.add("today");
-}
-
-const fullDate=
-`${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
-
-dayDiv.innerHTML=`<span>${i}</span>`;
-
-/* EVENT */
-if(plans[fullDate]){
-
-dayDiv.classList.add("has-plan");
-
-const tooltip=document.createElement("div");
-tooltip.className="tooltip";
-tooltip.innerText=plans[fullDate];
-
-dayDiv.appendChild(tooltip);
-}
-
-calendar.appendChild(dayDiv);
-}
-
-}
-
-/* click tooltip */
-document.addEventListener("click", function (e) {
-
-document.querySelectorAll(".tooltip").forEach(t=>{
-t.style.display="none";
-});
-
-const day = e.target.closest(".day");
-if(!day) return;
-
-const tooltip = day.querySelector(".tooltip");
-if(!tooltip) return;
-
-tooltip.style.display = tooltip.style.display === "block" ? "none" : "block";
-
-});
-
-function changeMonth(step){
-currentDate.setMonth(currentDate.getMonth()+step);
-generateCalendar();
-}
-
+// 4. В самом конце скрипта оставь вызов загрузки
 loadPlansFromFirebase();
 
 db.collection("plans").onSnapshot(()=>{
     loadPlansFromFirebase();
-});</script>
+});
+</script></script>
 
 </body>
 </html>
