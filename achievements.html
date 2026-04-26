@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Жетістіктер</title>
 
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
@@ -80,6 +81,8 @@ cursor:pointer;
 </section>
 
 <script>
+
+/* 🔥 FIREBASE INIT */
 const firebaseConfig = {
   apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
   authDomain: "nis-dorm.firebaseapp.com",
@@ -94,64 +97,61 @@ const db = firebase.firestore();
 
 const container = document.getElementById("achievements-list");
 
-/* 🔥 REALTIME RENDER */
-db.collection("achievements")
-  .orderBy("createdAt", "desc")
-  .onSnapshot(snapshot => {
-      container.innerHTML = "";
+/* 📥 LOAD */
+async function render(){
+    container.innerHTML = "";
 
-      snapshot.forEach(doc => {
-          const a = doc.data();
+    const snapshot = await db.collection("achievements")
+        .orderBy("createdAt","desc")
+        .get();
 
-          const block = document.createElement("div");
-          block.className = "achievement";
+    snapshot.forEach(doc => {
+        let a = doc.data();
 
-          const img = document.createElement("img");
-          img.src = a.image || "default.jpg";
+        const block = document.createElement("div");
+        block.className = "achievement";
 
-          const content = document.createElement("div");
+        block.innerHTML = `
+            <img src="${a.image}">
+            <div>
+                <h2>${a.title}</h2>
+                <p>${a.description}</p>
 
-          const title = document.createElement("h2");
-          title.textContent = a.title || "Без названия";
+                <div class="reactions">
+                    <button onclick="addReaction('${doc.id}','likes')">
+                        👍 ${a.likes || 0}
+                    </button>
 
-          const desc = document.createElement("p");
-          desc.textContent = a.description || "";
+                    <button onclick="addReaction('${doc.id}','loves')">
+                        ❤️ ${a.loves || 0}
+                    </button>
 
-          const reactions = document.createElement("div");
-          reactions.className = "reactions";
+                    <button onclick="addReaction('${doc.id}','fires')">
+                        🔥 ${a.fires || 0}
+                    </button>
+                </div>
+            </div>
+        `;
 
-          reactions.innerHTML = `
-              <button onclick="addReaction('${doc.id}','likes')">
-                  👍 ${a.likes || 0}
-              </button>
-              <button onclick="addReaction('${doc.id}','loves')">
-                  ❤️ ${a.loves || 0}
-              </button>
-              <button onclick="addReaction('${doc.id}','fires')">
-                  🔥 ${a.fires || 0}
-              </button>
-          `;
+        container.appendChild(block);
+    });
+}
 
-          content.appendChild(title);
-          content.appendChild(desc);
-          content.appendChild(reactions);
-
-          block.appendChild(img);
-          block.appendChild(content);
-
-          container.appendChild(block);
-      });
-  });
-
-/* ⚡ REACTIONS */
+/* ⚡ НОРМАЛЬНЫЕ РЕАКЦИИ */
 async function addReaction(id, field){
     const ref = db.collection("achievements").doc(id);
 
     await ref.update({
         [field]: firebase.firestore.FieldValue.increment(1)
     });
+
+    render();
 }
+
+render();
+
 </script>
 
 </body>
 </html>
+тут все правильно?
