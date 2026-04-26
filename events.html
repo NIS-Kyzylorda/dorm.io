@@ -161,6 +161,11 @@ db.collection("events")
         container.appendChild(block);
     });
 });
+
+
+  db.collection("events").get().then(snap=>{
+    console.log("TOTAL EVENTS:", snap.size);
+});
 </script>
 
 </body>
