@@ -1,12 +1,192 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Жоспарлар</title>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f5f7;
+color:#2c3e50;
+}
+
+header {
+background:white;
+padding:20px 0;
+box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+
+.container{
+width:90%;
+max-width:1200px;
+margin:auto;
+margin-top:30px;
+}
+
+.nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.logo img{
+width:120px;
+}
+
+nav ul{
+display:flex;
+list-style:none;
+gap:30px;
+}
+
+nav a{
+text-decoration:none;
+color:#2c3e50;
+}
+
+nav a:hover{
+color:#8b1e2d;
+}
+
+.month-nav{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:20px;
+margin-bottom:20px;
+}
+
+.month-nav button{
+padding:8px 14px;
+border:none;
+background:#1f3c88;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+.weekdays{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+margin-bottom:10px;
+}
+
+.weekdays div{
+text-align:center;
+font-weight:bold;
+color:#1f3c88;
+}
+
+.calendar{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:5px;
+}
+
+.day{
+background:white;
+border-radius:8px;
+padding:20px 10px;
+text-align:center;
+position:relative;
+cursor:pointer;
+transition:0.2s;
+}
+
+.day:hover{
+background:#e0e0e0;
+}
+
+.has-plan{
+background:#dff5e1;
+border:2px solid #2ecc71;
+}
+
+.today{
+border:2px solid #1f3c88;
+}
+
+.tooltip{
+position:absolute;
+bottom:105%;
+left:50%;
+transform:translateX(-50%);
+background:#8b1e2d;
+color:white;
+padding:10px;
+border-radius:6px;
+font-size:14px;
+width:200px;
+display:none;
+z-index:10;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="container nav">
+<div class="logo">
+<img src="logo.png">
+</div>
+
+<nav>
+<ul>
+<li><a href="index.html">Басты бет</a></li>
+<li><a href="events.html">Іс-шаралар</a></li>
+<li><a href="plans.html">Жоспарлар</a></li>
+<li><a href="achievements.html">Жетістіктер</a></li>
+</ul>
+</nav>
+</div>
+</header>
+
+<div class="container">
+
+<h1 style="text-align:center;margin-bottom:20px;">Жоспарлар</h1>
+
+<div class="month-nav">
+<button onclick="changeMonth(-1)">◀</button>
+<h2 id="monthTitle"></h2>
+<button onclick="changeMonth(1)">▶</button>
+</div>
+
+<div class="weekdays">
+<div>Дүй</div>
+<div>Сей</div>
+<div>Сәр</div>
+<div>Бей</div>
+<div>Жұм</div>
+<div>Сен</div>
+<div>Жек</div>
+</div>
+
+<div class="calendar" id="calendar"></div>
+
+</div>
+
+<script>
 let currentDate = new Date();
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
-  authDomain: "nis-dorm.firebaseapp.com",
-  projectId: "nis-dorm",
-  storageBucket: "nis-dorm.appspot.com",
-  messagingSenderId: "34661486520",
-  appId: "1:34661486520:web:3b6d3bd38c2d6fa7e0c94d"
+apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
+authDomain: "nis-dorm.firebaseapp.com",
+projectId: "nis-dorm",
+storageBucket: "nis-dorm.appspot.com",
+messagingSenderId: "34661486520",
+appId: "1:34661486520:web:3b6d3bd38c2d6fa7e0c94d"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -15,16 +195,16 @@ const db = firebase.firestore();
 let plans = {};
 
 async function loadPlansFromFirebase(){
-    const snapshot = await db.collection("plans").get();
+const snapshot = await db.collection("plans").get();
 
-    plans = {};
+plans = {};
 
-    snapshot.forEach(doc=>{
-        const data = doc.data();
-        plans[data.date] = data.text;
-    });
+snapshot.forEach(doc=>{
+const data = doc.data();
+plans[data.date] = data.text;
+});
 
-    generateCalendar();
+generateCalendar();
 }
 
 function generateCalendar(){
@@ -90,7 +270,6 @@ calendar.appendChild(dayDiv);
 
 }
 
-// click tooltip
 document.addEventListener("click", function (e) {
 
 document.querySelectorAll(".tooltip").forEach(t=>{
@@ -115,5 +294,9 @@ generateCalendar();
 loadPlansFromFirebase();
 
 db.collection("plans").onSnapshot(()=>{
-    loadPlansFromFirebase();
+loadPlansFromFirebase();
 });
+</script>
+
+</body>
+</html>
