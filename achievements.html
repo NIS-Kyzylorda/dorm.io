@@ -1,187 +1,33 @@
-<!DOCTYPE html>
-<html lang="kk">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Жетістіктер</title>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    background: #f4f5f7;
-    color: #2c3e50;
-}
-
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: auto;
-}
-
-header {
-    background: white;
-    padding: 20px 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo img {
-    width: 60px;
-}
-
-nav ul {
-    display: flex;
-    list-style: none;
-    gap: 30px;
-}
-
-nav a {
-    text-decoration: none;
-    color: #2c3e50;
-    font-weight: 500;
-}
-
-.title {
-    text-align: center;
-    margin: 50px 0 40px;
-}
-
-.title h1 {
-    font-size: 40px;
-    color: #1f3c88;
-}
-
-.achievement {
-    display: flex;
-    gap: 30px;
-    background: white;
-    margin-bottom: 30px;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    align-items: center;
-}
-
-.achievement img {
-    width: 260px;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.reactions button {
-    margin-right: 10px;
-    padding: 6px 10px;
-    border: none;
-    border-radius: 6px;
-    background: #eee;
-    cursor: pointer;
-}
-</style>
-</head>
-
-<body>
-
-<header>
-<div class="container nav">
-<div class="logo"><img src="logo.png"></div>
-<nav>
-<ul>
-<li><a href="index.html">Басты бет</a></li>
-<li><a href="events.html">Іс-шаралар</a></li>
-<li><a href="plans.html">Жоспарлар</a></li>
-<li><a href="achievements.html">Жетістіктер</a></li>
-</ul>
-</nav>
-</div>
-</header>
-
-<section class="container">
-<div class="title"><h1>Оқушылардың жетістіктері</h1></div>
-<div id="achievements-list"></div>
-</section>
-
-<script>
-    console.log("SCRIPT LOADED");
-// 🔥 FIREBASE INIT
-const firebaseConfig = {
-  apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
-  authDomain: "nis-dorm.firebaseapp.com",
-  projectId: "nis-dorm",
-  storageBucket: "nis-dorm.appspot.com",
-  messagingSenderId: "34661486520",
-  appId: "1:34661486520:web:3b6d3bd38c2d6fa7e0c94d"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-const container = document.getElementById("achievements-list");
-
-// 🔄 LIVE LOAD (сам обновляется)
-db.collection("achievements")
-.orderBy("createdAt", "desc")
-.onSnapshot(snapshot => {
-
-    container.innerHTML = "";
-
-    snapshot.forEach(doc => {
-        let a = doc.data();
-
-        const block = document.createElement("div");
-        block.className = "achievement";
-
-        block.innerHTML = `
-            <img src="${a.image}">
-            <div>
-                <h2>${a.title}</h2>
-                <p>${a.description}</p>
-
-                <div class="reactions">
-                    <button onclick="react('${doc.id}','likes')">
-                        👍 ${a.likes || 0}
-                    </button>
-
-                    <button onclick="react('${doc.id}','loves')">
-                        ❤️ ${a.loves || 0}
-                    </button>
-
-                    <button onclick="react('${doc.id}','fires')">
-                        🔥 ${a.fires || 0}
-                    </button>
-                </div>
-            </div>
-        `;
-
-        container.appendChild(block);
-    });
-});
-
-// ⚡ REACTIONS (НОРМАЛЬНЫЕ)
-async function react(id, field){
+async function toggleReaction(id, newReaction){
 
     const ref = db.collection("achievements").doc(id);
 
-    await ref.update({
-        [field]: firebase.firestore.FieldValue.increment(1)
+    await db.runTransaction(async (t) => {
+
+        const doc = await t.get(ref);
+        const data = doc.data();
+
+        if (!data) return;
+
+        const reactionsByUser = data.reactionsByUser || {};
+
+        // 🚫 если уже есть реакция — ничего не делаем
+        if (reactionsByUser[userId]) {
+            console.log("already reacted, locked");
+            return;
+        }
+
+        let updates = {};
+
+        // 👍 ставим реакцию
+        updates[newReaction] =
+            firebase.firestore.FieldValue.increment(1);
+
+        updates[`reactionsByUser.${userId}`] = newReaction;
+
+        t.update(ref, updates);
+    })
+    .catch(err => {
+        console.error("ERROR:", err);
     });
-
 }
-</script>
-
-</body>
-</html>
