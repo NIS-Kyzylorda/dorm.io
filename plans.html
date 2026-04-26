@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Жоспарлар</title>
+
+<style>
+
+/* RESET */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f5f7;
+color:#2c3e50;
+}
+
+/* HEADER */
+header {
+    background: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo img{
+width:120px;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: #8b1e2d;
+}
+
+/* LAYOUT */
+.container{
+width:90%;
+max-width:1200px;
+margin:auto;
+margin-top:30px;
+}
+
+/* MONTH NAV */
+.month-nav{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:20px;
+margin-bottom:20px;
+}
+
+.month-nav button{
+padding:8px 14px;
+border:none;
+background:#1f3c88;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* WEEKDAYS */
+.weekdays{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+margin-bottom:10px;
+}
+
+.weekdays div{
+text-align:center;
+font-weight:bold;
+color:#1f3c88;
+}
+
+/* CALENDAR */
+.calendar{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:5px;
+}
+
+/* DAY */
+.day{
+background:white;
+border-radius:8px;
+padding:20px 10px;
+text-align:center;
+position:relative;
+cursor:pointer;
+transition:0.2s;
+}
+
+.day:hover{
+background:#e0e0e0;
+}
+
+/* 🔥 GREEN DAYS WITH PLAN */
+.has-plan {
+    background: #dff5e1;
+    border: 2px solid #2ecc71;
+}
+
+/* TODAY */
+.today{
+border:2px solid #1f3c88;
+}
+
+/* TOOLTIP */
+.tooltip{
+position:absolute;
+bottom:105%;
+left:50%;
+transform:translateX(-50%);
+background:#8b1e2d;
+color:white;
+padding:10px;
+border-radius:6px;
+font-size:14px;
+width:200px;
+display:none;
+z-index:10;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container nav">
+        <div class="logo">
+            <img src="logo.png" alt="logo">
+        </div>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Басты бет</a></li>
+                <li><a href="events.html">Іс-шаралар</a></li>
+                <li><a href="plans.html">Жоспарлар</a></li>
+                <li><a href="achievements.html">Жетістіктер</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="container">
+
+<h1 style="text-align:center;margin-bottom:20px;">Жоспарлар</h1>
+
+<div class="month-nav">
+<button onclick="changeMonth(-1)">◀</button>
+<h2 id="monthTitle"></h2>
+<button onclick="changeMonth(1)">▶</button>
+</div>
+
+<div class="weekdays">
+<div>Дүй</div>
+<div>Сей</div>
+<div>Сәр</div>
+<div>Бей</div>
+<div>Жұм</div>
+<div>Сен</div>
+<div>Жек</div>
+</div>
+
+<div class="calendar" id="calendar"></div>
+
+</div>
+
+<script>
+
+let currentDate = new Date();
+
+function generateCalendar(){
+
+const calendar=document.getElementById("calendar");
+const monthTitle=document.getElementById("monthTitle");
+
+calendar.innerHTML="";
+
+/* планы */
+const plansArray = JSON.parse(localStorage.getItem("plans_admin")) || [];
+const plans = {};
+
+plansArray.forEach(plan=>{
+plans[plan.date] = plan.text;
+});
+
+const year=currentDate.getFullYear();
+const month=currentDate.getMonth();
+
+const months=[
+"Қаңтар","Ақпан","Наурыз","Сәуір","Мамыр","Маусым",
+"Шілде","Тамыз","Қыркүйек","Қазан","Қараша","Желтоқсан"
+];
+
+monthTitle.textContent=months[month]+" "+year;
+
+const firstDay=new Date(year,month,1);
+const lastDay=new Date(year,month+1,0).getDate();
+
+let firstDayIndex=firstDay.getDay();
+let offset=(firstDayIndex===0)?6:firstDayIndex-1;
+
+for(let i=0;i<offset;i++){
+calendar.appendChild(document.createElement("div"));
+}
+
+const today=new Date();
+
+for(let i=1;i<=lastDay;i++){
+
+const dayDiv=document.createElement("div");
+dayDiv.className="day";
+
+if(
+i===today.getDate() &&
+month===today.getMonth() &&
+year===today.getFullYear()
+){
+dayDiv.classList.add("today");
+}
+
+const fullDate=
+`${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+
+dayDiv.innerHTML=`<span>${i}</span>`;
+
+/* если есть план */
+if(plans[fullDate]){
+
+dayDiv.classList.add("has-plan");
+
+const tooltip=document.createElement("div");
+tooltip.className="tooltip";
+tooltip.innerText=plans[fullDate];
+
+dayDiv.appendChild(tooltip);
+
+}
+
+calendar.appendChild(dayDiv);
+
+}
+
+}
+
+/* click tooltip (mobile fix) */
+document.addEventListener("click", function (e) {
+
+document.querySelectorAll(".tooltip").forEach(t=>{
+t.style.display="none";
+});
+
+const day = e.target.closest(".day");
+
+if(!day) return;
+
+const tooltip = day.querySelector(".tooltip");
+
+if(tooltip){
+tooltip.style.display="block";
+}
+
+});
+
+function changeMonth(step){
+currentDate.setMonth(currentDate.getMonth()+step);
+generateCalendar();
+}
+
+generateCalendar();
+
+window.addEventListener("storage",generateCalendar);
+
+</script>
+
+</body>
+</html>
