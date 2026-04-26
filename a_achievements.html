@@ -4,30 +4,112 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Жетістік қосу</title>
+
+<!-- Firebase (ВАЖНО: compat версия) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 <style>
-body{font-family:Arial;background:#f4f5f7;padding:40px;}
-.container{max-width:700px;margin:auto;background:white;padding:30px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.08);}
-h1{margin-bottom:20px;color:#1f3c88;}
-input, textarea{width:100%;padding:10px;margin-bottom:15px;border-radius:6px;border:1px solid #ccc;}
-button{background:#8b1e2d;color:white;border:none;padding:10px 15px;border-radius:6px;cursor:pointer;margin-top:5px;}
-button:hover{background:#6d1622;}
-.achievement{display:flex;gap:20px;background:#fefefe;margin-bottom:15px;padding:10px;border-radius:8px;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
-.achievement img{width:100px;height:70px;object-fit:cover;border-radius:6px;}
-.achievement-text{flex:1;}
-.achievement-text h2{margin:0;font-size:16px;color:#1f3c88;}
-.achievement-text p{margin:5px 0 0;color:#555;font-size:14px;}
-.delete-btn{background:#e74c3c;padding:5px 10px;font-size:12px;}
-.delete-btn:hover{background:#c0392b;}
+body{
+    font-family:Arial;
+    background:#f4f5f7;
+    padding:40px;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+h1{
+    margin-bottom:20px;
+    color:#1f3c88;
+}
+
+input, textarea{
+    width:100%;
+    padding:10px;
+    margin-bottom:15px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+button{
+    background:#8b1e2d;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:6px;
+    cursor:pointer;
+    margin-top:5px;
+}
+
+button:hover{
+    background:#6d1622;
+}
+
+.achievement{
+    display:flex;
+    gap:20px;
+    background:#fefefe;
+    margin-bottom:15px;
+    padding:10px;
+    border-radius:8px;
+    align-items:center;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+
+.achievement img{
+    width:100px;
+    height:70px;
+    object-fit:cover;
+    border-radius:6px;
+}
+
+.achievement-text{
+    flex:1;
+}
+
+.achievement-text h2{
+    margin:0;
+    font-size:16px;
+    color:#1f3c88;
+}
+
+.achievement-text p{
+    margin:5px 0 0;
+    color:#555;
+    font-size:14px;
+}
+
+.delete-btn{
+    background:#e74c3c;
+    padding:5px 10px;
+    font-size:12px;
+}
+
+.delete-btn:hover{
+    background:#c0392b;
+}
 </style>
 </head>
+
 <body>
-<a href="admin_main.html", style="color: #1f3c88;">Артқа қайту</a>
+
+<a href="admin_main.html" style="color:#1f3c88;">Артқа қайту</a>
+
 <div class="container">
+
 <h1>Жетістік қосу</h1>
 
 <input id="title" placeholder="Жетістік атауы">
 <textarea id="description" placeholder="Жетістік сипаттамасы"></textarea>
 <input type="file" id="photo">
+
 <button onclick="addAchievement()">Қосу</button>
 
 <h2 style="margin-top:30px;color:#1f3c88;">Барлық жетістіктер</h2>
@@ -36,62 +118,93 @@ button:hover{background:#6d1622;}
 </div>
 
 <script>
-function renderAchievements(){
-    const container = document.getElementById("achievements-list")
-    container.innerHTML = ""
-    let achievements = JSON.parse(localStorage.getItem("achievements")) || []
 
-    achievements.forEach((a,index)=>{
-        const block = document.createElement("div")
-        block.className = "achievement"
+/* 🔥 FIREBASE INIT */
+const firebaseConfig = {
+  apiKey: "AIzaSyAkSfVGVfDs8AHiM_2NCDl0MEhmf_YbSew",
+  authDomain: "nis-dorm.firebaseapp.com",
+  projectId: "nis-dorm",
+  storageBucket: "nis-dorm.appspot.com",
+  messagingSenderId: "34661486520",
+  appId: "1:34661486520:web:3b6d3bd38c2d6fa7e0c94d"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* 📥 ЗАГРУЗКА */
+async function renderAchievements(){
+
+    const container = document.getElementById("achievements-list");
+    container.innerHTML = "";
+
+    const snapshot = await db.collection("achievements")
+        .orderBy("createdAt", "desc")
+        .get();
+
+    snapshot.forEach(doc => {
+
+        const a = doc.data();
+
+        const block = document.createElement("div");
+        block.className = "achievement";
+
         block.innerHTML = `
             <img src="${a.image}">
             <div class="achievement-text">
                 <h2>${a.title}</h2>
                 <p>${a.description}</p>
             </div>
-            <button class="delete-btn" onclick="deleteAchievement(${index})">Өшіру</button>
-        `
-        container.appendChild(block)
-    })
+            <button class="delete-btn" onclick="deleteAchievement('${doc.id}')">Өшіру</button>
+        `;
+
+        container.appendChild(block);
+    });
 }
 
-function addAchievement(){
-    let title = document.getElementById("title").value
-    let description = document.getElementById("description").value
-    let photo = document.getElementById("photo").files[0]
+/* ➕ ДОБАВИТЬ */
+async function addAchievement(){
 
-    if(!title || !description || !photo){ alert("Барлық өрістерді толтырыңыз!"); return; }
+    let title = document.getElementById("title").value;
+    let description = document.getElementById("description").value;
+    let photo = document.getElementById("photo").files[0];
 
-    let reader = new FileReader()
-    reader.onload = function(){
-        let achievement = {title:title, description:description, image:reader.result}
-        let achievements = JSON.parse(localStorage.getItem("achievements")) || []
-
-        achievements.unshift(achievement) // новые сверху
-        localStorage.setItem("achievements", JSON.stringify(achievements))
-
-        document.getElementById("title").value = ""
-        document.getElementById("description").value = ""
-        document.getElementById("photo").value = ""
-
-        renderAchievements()
+    if(!title || !description || !photo){
+        alert("Барлық өрістерді толтырыңыз!");
+        return;
     }
 
-    reader.readAsDataURL(photo)
+    let reader = new FileReader();
+
+    reader.onload = async function(){
+
+        await db.collection("achievements").add({
+            title: title,
+            description: description,
+            image: reader.result,
+            createdAt: Date.now()
+        });
+
+        document.getElementById("title").value = "";
+        document.getElementById("description").value = "";
+        document.getElementById("photo").value = "";
+
+        renderAchievements();
+    };
+
+    reader.readAsDataURL(photo);
 }
 
-function deleteAchievement(index){
-    let achievements = JSON.parse(localStorage.getItem("achievements")) || []
-    achievements.splice(index,1)
-    localStorage.setItem("achievements", JSON.stringify(achievements))
-    renderAchievements()
+/* 🗑 УДАЛИТЬ */
+async function deleteAchievement(id){
+    await db.collection("achievements").doc(id).delete();
+    renderAchievements();
 }
 
-// При загрузке страницы показываем все существующие достижения
-renderAchievements()
+/* старт */
+renderAchievements();
+
 </script>
 
 </body>
 </html>
-```
